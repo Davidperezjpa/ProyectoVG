@@ -7,6 +7,9 @@ public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
 
+    //Player stats
+    //public int health = 10;
+
     //Jumping
     private bool isGrounded;
     private int isJumping = 0;

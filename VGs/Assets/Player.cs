@@ -19,6 +19,16 @@ public class Player : MonoBehaviour
     public Text textito;
     private int enemyDrop;
 
+    //Sword
+    public GameObject sword;
+
+    //Hands
+    public Transform handR, handL, up, down;
+
+    //Bullet
+    public GameObject bullet;
+    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +44,7 @@ public class Player : MonoBehaviour
 
         //Horizontal movement
         float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
         transform.Translate(h *5* Time.deltaTime, 0, 0, Space.World);
 
         //Jumping movement
@@ -45,10 +56,55 @@ public class Player : MonoBehaviour
             
         }
 
-       
+        //Sword Attack
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            if (h > 0  && h==0)
+            {
+                Instantiate(sword, handR.position, handR.rotation);
+                
+            }
+            else if(h < 0 && h == 0)
+            {
+                Instantiate(sword, handL.position, handL.rotation);
+                
+            }
+            else if (v > 0)
+            {
+                Instantiate(sword, up.position, up.rotation);
+            }
+            else if (v < 0)
+            {
+                Instantiate(sword, down.position, down.rotation);
+            }
+        }
+
+        //Shooting
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (h > 0 && h == 0)
+            {
+                Instantiate(bullet, handR.position, handR.rotation);
+
+            }
+            else if (h < 0 && h == 0)
+            {
+                Instantiate(bullet, handL.position, handL.rotation);
+
+            }
+            else if (v > 0)
+            {
+                Instantiate(bullet, up.position, up.rotation);
+            }
+            else if (v < 0)
+            {
+                Instantiate(bullet, down.position, down.rotation);
+            }
+
+        }
 
         //Dash movement
-        if (Input.GetKey(KeyCode.E) && isDashing==false)
+        if (Input.GetKey(KeyCode.LeftShift) && isDashing==false)
         {
             this.isDashing = true;
             if (h > 0) //Derecha
@@ -85,4 +141,5 @@ public class Player : MonoBehaviour
         this.isDashing = false;
         StopCoroutine(dashCooldown());
     }
+
 }

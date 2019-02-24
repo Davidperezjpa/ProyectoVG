@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
+    private GameObject player;
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.Find("Player");
+        transform.SetParent(player.transform);
     }
 
     // Update is called once per frame
     void Update()
     {
-        Destroy(gameObject, 3/4);
+        Destroy(gameObject, 0.1f);
     }
 }

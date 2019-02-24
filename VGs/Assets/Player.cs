@@ -59,12 +59,12 @@ public class Player : MonoBehaviour
         //Sword Attack
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            if (h > 0  && h==0)
+            if (h > 0  && v==0)
             {
                 Instantiate(sword, handR.position, handR.rotation);
                 
             }
-            else if(h < 0 && h == 0)
+            else if(h < 0 && v == 0)
             {
                 Instantiate(sword, handL.position, handL.rotation);
                 
@@ -82,12 +82,12 @@ public class Player : MonoBehaviour
         //Shooting
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (h > 0 && h == 0)
+            if (h > 0 && v == 0)
             {
                 Instantiate(bullet, handR.position, handR.rotation);
 
             }
-            else if (h < 0 && h == 0)
+            else if (h < 0 && v == 0)
             {
                 Instantiate(bullet, handL.position, handL.rotation);
 

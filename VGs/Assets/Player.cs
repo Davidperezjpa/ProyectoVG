@@ -9,12 +9,15 @@ public class Player : MonoBehaviour
 
     //Player stats
     //public int health = 10;
+    private bool lookR;
 
     //Jumping
     private bool isJumping;
+    private float lastj;
 
     //Dashing
-    private bool isDashing;
+    private bool isDashing, canDash;
+    private float lastd;
     private Coroutine dashCoroutine;
 
     //Enemy drop score
@@ -25,6 +28,7 @@ public class Player : MonoBehaviour
     public GameObject sword;
     private bool canMove;
     private bool isGrounded;
+    private float lasts;
 
     //Hands
     public Transform handR, handL, up, down;
@@ -32,6 +36,7 @@ public class Player : MonoBehaviour
     //Bullet
     public GameObject bullet;
     private bool canShoot;
+    private float lastb;
 
     //Hook
     private bool canHook;
@@ -40,11 +45,13 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.lookR = true;
         rb = GetComponent<Rigidbody2D>();
         this.enemyDrop = 0;
         this.canMove = true;
         this.canShoot = true;
         this.canHook = true;
+        this.canDash = true;
 
         this.isDashing = false;
         this.isGrounded = false;
@@ -59,35 +66,44 @@ public class Player : MonoBehaviour
         textito.text = "Soul: " + enemyDrop;
 
         //Horizontal movement
-        float h = Input.GetAxis("Horizontal");
+        float h = Input.GetAxisRaw("Horizontal");
+        if (h > 0.6) lookR = true;
+        else if (h < -0.6) lookR = false;
+
         float v = Input.GetAxisRaw("Vertical");
 
-        if(canMove|| !isGrounded)
+        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6)
         {
             transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
         }
-        
+
         //Jumping movement
-        if (Input.GetKeyDown(KeyCode.Space) && !this.isJumping)
+        float j=Input.GetAxisRaw("Jump");
+        if (j==1 && lastj==0 && !this.isJumping)
         {
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
             rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
         }
+        this.lastj = j;
         this.isGrounded = false;
 
         //Sword Attack
-        if (Input.GetKeyDown(KeyCode.Mouse0) && canMove)
+        float s = Input.GetAxisRaw("Sword");
+        if (s==1 &&lasts==0&& canMove)
         {
-            if (h > 0  && v==0) //Right
+            if (Mathf.Abs(h) >= Mathf.Abs(v))
             {
-                Instantiate(sword, handR.position, handR.rotation);
-                
-            }
-            else if(h < 0 && v == 0) //Left
-            {
-                Instantiate(sword, handL.position, handL.rotation);
-                
+                if (lookR) //Right
+                {
+                    Instantiate(sword, handR.position, handR.rotation);
+
+                }
+                else if (!lookR) //Left
+                {
+                    Instantiate(sword, handL.position, handL.rotation);
+
+                }
             }
             else if (v > 0) //Up
             {
@@ -98,50 +114,50 @@ public class Player : MonoBehaviour
                 Instantiate(sword, down.position, down.rotation);
             }
             StartCoroutine(swordCooldown());
+            lasts = s;
         }
+        lasts = s;
 
         //Shooting
-        if (Input.GetKeyDown(KeyCode.Mouse1) && canShoot)
+        float b=Input.GetAxisRaw("Bullet");
+        if (b ==1 && lastb ==0 && canShoot)
         {
-            if (h > 0 && v == 0) // Right
+
+            if (lookR) // Right
             {
                 Instantiate(bullet, handR.position, handR.rotation);
                 StartCoroutine(bulletCooldown());
             }
-            else if (h < 0 && v == 0) //Left
+            else if (!lookR) //Left
             {
                 Instantiate(bullet, handL.position, handL.rotation);
-                StartCoroutine(bulletCooldown());
-            }
-            else if (v > 0) //Up
-            {
-                Instantiate(bullet, up.position, up.rotation);
-                StartCoroutine(bulletCooldown());
-            }
-            else if (v < 0) //Down
-            {
-                Instantiate(bullet, down.position, down.rotation);
                 StartCoroutine(bulletCooldown());
             }
         }
 
         //Dash movement
-        if (Input.GetKey(KeyCode.LeftShift) && !isDashing)
+        float d = Input.GetAxisRaw("Dash");
+        if (d>=0.5 && lastd<0.5 && !isDashing && canDash)
         {
-            if (h > 0) //Derecha
+            canDash = false;
+            if (lookR) //Derecha
             {
                 this.isDashing = true;
                 rb.AddForce(new Vector2(30, 0), ForceMode2D.Impulse);
                 dashCoroutine = StartCoroutine(dashCooldown());
             }
-            else if (h < 0) // Izquierda
+            else if (!lookR) // Izquierda
             {
                 this.isDashing = true;
                 rb.AddForce(new Vector2(-30, 0), ForceMode2D.Impulse);
                 dashCoroutine = StartCoroutine(dashCooldown());
             }
+            lastd = d;
         }
-
+        if (d < 0.5)
+        {
+            lastd = d;
+        }
         //Hook
         if (Input.GetKeyDown(KeyCode.C))
         {
@@ -156,6 +172,7 @@ public class Player : MonoBehaviour
         {
             this.isJumping = false;
             this.isGrounded = true;
+            this.canDash = true;
         }
     }
 
@@ -163,7 +180,7 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(0.15f);
         rb.velocity = new Vector2(0,rb.velocity.y);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.4f);
         this.isDashing = false;
         StopCoroutine(dashCooldown());
     }
@@ -182,7 +199,7 @@ public class Player : MonoBehaviour
     IEnumerator bulletCooldown()
     {
         this.canShoot = false;
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
         this.canShoot = true;
         StopCoroutine(bulletCooldown());
     }

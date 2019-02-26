@@ -2,71 +2,79 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class EnemyShoots : MonoBehaviour
 {
     private Rigidbody2D rb;
 
     private float lastJ;
     private int sentido = -1;
 
-    public GameObject player;
+    private GameObject player;
     public GameObject bullet;
-    public Transform lHand,
-                     rHand;
+
+
+    public GameObject drop,
+                      corpse;
+
+
+    private Coroutine shoot;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player");
+        shoot = StartCoroutine(shooting());
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Movement - leave one commented
 
         //Patrol-like movement
         transform.Translate(5 * this.sentido * Time.deltaTime, 0, 0);
 
-        //Follower-like movement
-        float h;
-        if (Input.GetAxis("Horizontal") > 0)
-        {
-            h = 1;
-            this.lastJ = 1;
-        }
-        else if (Input.GetAxis("Horizontal") < 0)
-        {
-            h = -1;
-            this.lastJ = -1;
-        }
-        else
-        {
-            h = this.lastJ;
-        }
-
-        transform.Translate(5 * h * Time.deltaTime, 0, 0);
-
-        //Shooting
-        //Other posibilities:
-        //-when on same Y axis
-        //-at any direction every X seconds
-
-        //Shoot every X seconds sideways
-        if (this.sentido == 1)
-        {
-            Instantiate(bullet, rHand.position, rHand.rotation);
-        }
-        else
-        {
-            Instantiate(bullet, lHand.position, lHand.rotation);
-        }
-
     }
 
-    private void OnTriggerEnter(Collider collider)
+    //Shoot at player every X seconds
+    IEnumerator shooting() {
+        while (true)
+        {
+            yield return new WaitForSeconds(2f);
+            GameObject bulletI = Instantiate(bullet, transform.position, transform.rotation);
+            bulletI.GetComponent<Rigidbody2D>().AddForce(new Vector2(player.transform.position.x - bulletI.transform.position.x, player.transform.position.y - bulletI.transform.position.y), ForceMode2D.Impulse);
+        }
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.layer == 9)
+        {
+            this.sentido *= -1;
+        }
+        //When a proyectile hits the enemy
+        if (collider.gameObject.layer == 11)
+        {
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(collider.gameObject);
+            Destroy(this.gameObject);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //When a proyectile hits the enemy
+        if (collision.gameObject.layer == 11)
+        {
+            StopCoroutine(shooting());
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(collision.gameObject);
+            Destroy(this.gameObject);
+        }
+        //When an enemy collides with another enemy
+        else if (collision.gameObject.layer == 10)
         {
             this.sentido *= -1;
         }

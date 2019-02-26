@@ -6,49 +6,53 @@ public class EnemyFollower : MonoBehaviour
 {
     private Rigidbody2D rb;
 
-    private float lastJ;
+    private int sentido = 1;
+    private int lastSentido = 1;
+    private GameObject player;
+    public GameObject drop,
+                      corpse;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player");
     }
 
     void Update()
     {
-        float h;
-        if (Input.GetAxis("Horizontal") > 0)
+        if (player.transform.position.x > this.transform.position.x)
         {
-            h = 1;
-            this.lastJ = 1;
+            this.sentido = this.lastSentido = 1;
         }
-        else if (Input.GetAxis("Horizontal") < 0)
+        else if (player.transform.position.x < this.transform.position.x)
         {
-            h = -1;
-            this.lastJ = -1;
+            this.sentido = this.lastSentido = -1;
         }
         else
         {
-            h = this.lastJ;
+            this.sentido = this.lastSentido;
         }
-
        
-        transform.Translate(7 * h * Time.deltaTime, 0, 0);
+        transform.Translate(3 * this.sentido * Time.deltaTime, 0, 0);
     }
 
-    public void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter2D(Collider2D collider)
     {
         //When a proyectile hits the enemy
-        if (collision.gameObject.layer == 11)
+        if (collider.gameObject.layer == 11)
         {
-            print("colision");
-            Destroy(collision.gameObject);
-            Destroy(this);
-        }
-        //When an enemy collides with player
-        else if (collision.gameObject.layer == 12)
-        {
-
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(collider.gameObject);
+            Destroy(this.gameObject);
         }
     }
+
+    public void OnCollisionEnter2D(Collision2D collision)
+    {
+      
+    }
+
+
 
 }

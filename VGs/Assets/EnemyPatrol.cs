@@ -6,7 +6,10 @@ public class EnemyPatrol : MonoBehaviour
 {
     private Rigidbody2D rb;
 
-    private int sentido = 1;
+    private int sentido = -1;
+
+    public GameObject drop,
+                      corpse;
 
     void Start()
     {
@@ -18,26 +21,31 @@ public class EnemyPatrol : MonoBehaviour
         transform.Translate(this.sentido * 7 * Time.deltaTime, 0, 0);
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.layer == 9)
         {
             this.sentido *= -1;
         }
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
         //When a proyectile hits the enemy
-        if (collision.gameObject.layer == 11)
+        if (collider.gameObject.layer == 11)
         {
-            Destroy(collision.gameObject);
-            Destroy(this);
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(collider.gameObject);
+            Destroy(this.gameObject);
         }
-        //When an enemy collides with player
-        else if (collision.gameObject.layer == 12)
-        {
 
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //When an enemy collides with another enemy
+        if (collision.gameObject.layer == 10)
+        {
+            this.sentido *= -1;
         }
     }
+
+
 }

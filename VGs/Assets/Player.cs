@@ -40,7 +40,6 @@ public class Player : MonoBehaviour
 
     //Hook
     private bool canHook;
-    
 
     // Start is called before the first frame update
     void Start()
@@ -163,6 +162,36 @@ public class Player : MonoBehaviour
         {
 
         }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.layer == 13)
+        {
+            this.enemyDrop++;
+            Destroy(collider.gameObject);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        //When an enemy collides with player
+        if (collision.gameObject.layer == 10 || collision.gameObject.layer == 14)
+        {
+            if (collision.gameObject.transform.position.x < transform.position.x)
+            {
+                rb.AddForce(new Vector2(10, 0), ForceMode2D.Impulse);
+            }
+            else if (collision.gameObject.transform.position.x < transform.position.x)
+            {
+                rb.AddForce(new Vector2(10 * -1, 0), ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
+            }
+        }
+        
     }
 
 

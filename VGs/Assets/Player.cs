@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     //Enemy drop score
     public Text textito;
     private int enemyDrop;
-
+    
     //Sword
     public GameObject sword;
     private bool canMove;

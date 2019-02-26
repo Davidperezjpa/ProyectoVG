@@ -26,7 +26,8 @@ public class Player : MonoBehaviour
     
     //Sword
     public GameObject sword;
-    public static bool canMove = true;
+    public static bool nothooking;
+    private bool canMove;
     private bool isGrounded;
     private float lasts;
 
@@ -44,6 +45,8 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        nothooking = true;
+        this.canMove = true;
         this.lookR = true;
         rb = GetComponent<Rigidbody2D>();
         this.enemyDrop = 0;
@@ -70,7 +73,7 @@ public class Player : MonoBehaviour
 
         float v = Input.GetAxisRaw("Vertical");
 
-        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6)
+        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking)
         {
             transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
         }

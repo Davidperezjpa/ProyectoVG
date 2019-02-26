@@ -37,7 +37,7 @@ public class Hook : MonoBehaviour
             if (hit.collider != null)
             {
                 canHook = false;
-                Player.canMove = false;
+                Player.nothooking = false;
                 hooking = true;
                 x = hit.point.x - transform.position.x;
                 y = hit.point.y - transform.position.y;
@@ -65,7 +65,7 @@ public class Hook : MonoBehaviour
             playerRb.velocity = new Vector2(x*10,y*10);
             if (hook == 0 && lasthook == 1)
             {
-                Player.canMove = true;
+                Player.nothooking = true;
                 playerRb.velocity = Vector2.up;
                 hooking = false;
             }
@@ -74,7 +74,7 @@ public class Hook : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Player.canMove = true;
+        Player.nothooking = true;
         hooking = false;
         if (collision.gameObject.layer == 8)
         {

@@ -332,7 +332,6 @@ GameObject:
   - component: {fileID: 5064944271808049209}
   - component: {fileID: 5064944271808049211}
   - component: {fileID: 5064944271808049208}
-  - component: {fileID: 5064944271808049213}
   - component: {fileID: 5064944271808049210}
   m_Layer: 12
   m_Name: Player
@@ -474,25 +473,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!232 &5064944271808049213
-DistanceJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5064944271808049204}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 1
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 12.295084, y: 8.283005}
-  m_AutoConfigureDistance: 0
-  m_Distance: 8.860331
-  m_MaxDistanceOnly: 1
 --- !u!114 &5064944271808049210
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -505,10 +485,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb0ceabc4482c7347aa67c6570c2cf97, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distance: 10
-  mask:
-    serializedVersion: 2
-    m_Bits: 3895
 --- !u!1 &5064944271877475286
 GameObject:
   m_ObjectHideFlags: 0

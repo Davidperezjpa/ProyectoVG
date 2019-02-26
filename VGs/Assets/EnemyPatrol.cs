@@ -28,7 +28,7 @@ public class EnemyPatrol : MonoBehaviour
             this.sentido *= -1;
         }
         //When a proyectile hits the enemy
-        if (collider.gameObject.layer == 11)
+        if (collider.gameObject.layer == 11 )
         {
             Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
             Instantiate(drop, transform.position, transform.localRotation);
@@ -40,10 +40,17 @@ public class EnemyPatrol : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+
         //When an enemy collides with another enemy
         if (collision.gameObject.layer == 10)
         {
             this.sentido *= -1;
+        }
+        if (collision.gameObject.layer == 16)
+        {
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(this.gameObject);
         }
     }
 

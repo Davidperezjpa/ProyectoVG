@@ -46,11 +46,18 @@ public class EnemyFollower : MonoBehaviour
             Destroy(collider.gameObject);
             Destroy(this.gameObject);
         }
+       
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-      
+
+        if (collision.gameObject.layer == 16)
+        {
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(this.gameObject);
+        }
     }
 
 

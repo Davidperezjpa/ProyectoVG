@@ -90,5 +90,12 @@ public class EnemyShoots : MonoBehaviour
         {
             this.sentido *= -1;
         }
+        //When enemy collides sword
+        if (collision.gameObject.layer == 16)
+        {
+            Destroy(Instantiate(corpse, transform.position, transform.localRotation), 2);
+            Instantiate(drop, transform.position, transform.localRotation);
+            Destroy(this.gameObject);
+        }
     }
 }

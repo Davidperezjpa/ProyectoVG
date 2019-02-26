@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8356873693866700449}
   - component: {fileID: 4254709578664460436}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Espada
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 3733462213765378543}
   - component: {fileID: 3412121400085893862}
   - component: {fileID: 8642730385789995330}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: Sword
   m_TagString: Untagged
   m_Icon: {fileID: 0}

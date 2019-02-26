@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     
     //Sword
     public GameObject sword;
-    private bool canMove;
+    public static bool canMove = true;
     private bool isGrounded;
     private float lasts;
 
@@ -47,7 +47,6 @@ public class Player : MonoBehaviour
         this.lookR = true;
         rb = GetComponent<Rigidbody2D>();
         this.enemyDrop = 0;
-        this.canMove = true;
         this.canShoot = true;
         this.canHook = true;
         this.canDash = true;
@@ -78,7 +77,7 @@ public class Player : MonoBehaviour
 
         //Jumping movement
         float j=Input.GetAxisRaw("Jump");
-        if (j==1 && lastj==0 && !this.isJumping)
+        if (j==1 && lastj==0 && !this.isJumping && canMove)
         {
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
@@ -136,7 +135,7 @@ public class Player : MonoBehaviour
 
         //Dash movement
         float d = Input.GetAxisRaw("Dash");
-        if (d>=0.5 && lastd<0.5 && !isDashing && canDash)
+        if (d>=0.5 && lastd<0.5 && !isDashing && canDash && canMove)
         {
             canDash = false;
             if (lookR) //Derecha
@@ -171,12 +170,28 @@ public class Player : MonoBehaviour
             this.enemyDrop++;
             Destroy(collider.gameObject);
         }
+
+        if (collider.gameObject.layer == 14)
+        {
+            if (collider.gameObject.transform.position.x < transform.position.x)
+            {
+                rb.AddForce(new Vector2(10, 0), ForceMode2D.Impulse);
+            }
+            else if (collider.gameObject.transform.position.x < transform.position.x)
+            {
+                rb.AddForce(new Vector2(10 * -1, 0), ForceMode2D.Impulse);
+            }
+            else
+            {
+                rb.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         //When an enemy collides with player
-        if (collision.gameObject.layer == 10 || collision.gameObject.layer == 14)
+        if (collision.gameObject.layer == 10)
         {
             if (collision.gameObject.transform.position.x < transform.position.x)
             {
@@ -216,13 +231,13 @@ public class Player : MonoBehaviour
 
     IEnumerator swordCooldown()
     {
-        this.canMove = false;
+        canMove = false;
         if (isGrounded)
         {
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
         yield return new WaitForSeconds(0.1f);
-        this.canMove = true;
+        canMove = true;
         StopCoroutine(swordCooldown());
     }
     IEnumerator bulletCooldown()

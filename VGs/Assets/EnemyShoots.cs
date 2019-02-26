@@ -24,7 +24,6 @@ public class EnemyShoots : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
-        shoot = StartCoroutine(shooting());
     }
 
     // Update is called once per frame
@@ -38,13 +37,26 @@ public class EnemyShoots : MonoBehaviour
 
     //Shoot at player every X seconds
     IEnumerator shooting() {
+
         while (true)
         {
+
             yield return new WaitForSeconds(2f);
             GameObject bulletI = Instantiate(bullet, transform.position, transform.rotation);
             bulletI.GetComponent<Rigidbody2D>().AddForce(new Vector2(player.transform.position.x - bulletI.transform.position.x, player.transform.position.y - bulletI.transform.position.y), ForceMode2D.Impulse);
+
         }
         
+    }
+
+    private void OnBecameVisible()
+    {
+        shoot = StartCoroutine(shooting());
+    }
+
+    private void OnBecameInvisible()
+    {
+        StopAllCoroutines();
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

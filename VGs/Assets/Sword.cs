@@ -17,4 +17,12 @@ public class Sword : MonoBehaviour
     {
         Destroy(gameObject, 0.1f);
     }
+
+    private void OnCollisionEnter2D(Collision2D collider)
+    {
+        if (collider.gameObject.layer == 15)
+        {
+            Destroy(collider.gameObject);
+        }
+    }
 }

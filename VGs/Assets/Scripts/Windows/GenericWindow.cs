@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class GenericWindow : MonoBehaviour
 {
+    public static WindowsManager manager;
 
     public GameObject firstSelected;
 

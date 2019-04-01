@@ -45,6 +45,7 @@ public class WindowsManager : MonoBehaviour
 
     void Start()
     {
+        GenericWindow.manager = this;
         Open(defaultWindowID);
     }
 }

@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 4b9642425d8a70241becc94825ba44ce
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: MAD hacker
+  fontNames:
+  - MAD hacker
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 1f3b8a1ddefbe7c4d9d456265833ee60, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

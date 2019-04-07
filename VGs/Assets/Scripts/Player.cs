@@ -57,21 +57,28 @@ public class Player : MonoBehaviour
         this.isDashing = false;
         this.isGrounded = false;
         this.isJumping = false;
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Enemy drop score
+        //Inputs Ponganlos aqui cabrones y en string
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        float j = Input.GetAxisRaw("Jump");
+        float s = Input.GetAxisRaw("Sword");
+        float b = Input.GetAxisRaw("Bullet");
+        float d = Input.GetAxisRaw("Dash");
+        float pause = Input.GetAxisRaw("Pause");
+
+
+        //Texto souls
         textito.text = "Soul: " + enemyDrop;
 
         //Horizontal movement
-        float h = Input.GetAxisRaw("Horizontal");
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
 
-        float v = Input.GetAxisRaw("Vertical");
 
         if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking)
         {
@@ -79,7 +86,6 @@ public class Player : MonoBehaviour
         }
 
         //Jumping movement
-        float j=Input.GetAxisRaw("Jump");
         if (j==1 && lastj==0 && !this.isJumping && canMove)
         {
             this.isJumping = true;
@@ -90,7 +96,6 @@ public class Player : MonoBehaviour
         this.isGrounded = false;
 
         //Sword Attack
-        float s = Input.GetAxisRaw("Sword");
         if (s==1 &&lasts==0&& canMove)
         {
             if (Mathf.Abs(h) >= Mathf.Abs(v))
@@ -120,7 +125,6 @@ public class Player : MonoBehaviour
         lasts = s;
 
         //Shooting
-        float b=Input.GetAxisRaw("Bullet");
         if (b ==1 && lastb ==0 && canShoot)
         {
 
@@ -137,7 +141,6 @@ public class Player : MonoBehaviour
         }
 
         //Dash movement
-        float d = Input.GetAxisRaw("Dash");
         if (d>=0.5 && lastd<0.5 && !isDashing && canDash && canMove)
         {
             canDash = false;
@@ -159,14 +162,9 @@ public class Player : MonoBehaviour
         {
             lastd = d;
         }
-        //Hook
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-
-        }
 
         //Pause Menu
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (pause==1)
         {
             Time.timeScale = 0;
 

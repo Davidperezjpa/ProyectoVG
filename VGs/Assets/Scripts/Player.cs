@@ -79,7 +79,6 @@ public class Player : MonoBehaviour
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
 
-
         if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking)
         {
             transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
@@ -141,7 +140,7 @@ public class Player : MonoBehaviour
         }
 
         //Dash movement
-        if (d>=0.5 && lastd<0.5 && !isDashing && canDash && canMove)
+        if (h!=0 && d>=0.5 && lastd<0.5 && !isDashing && canDash && canMove)
         {
             canDash = false;
             if (lookR) //Derecha

@@ -8,18 +8,21 @@ public class Hook : MonoBehaviour
     private float distance;
     private Vector2 targetPosition;
     private float lasthook,x,y;
-    private Rigidbody2D playerRb;
+    private Rigidbody2D playerrb;
     private LayerMask lm;
     private bool hooking, canHook;
+    private LineRenderer lr;
     private RaycastHit2D hit;
 
     // Start is called before the first frame update
     void Start()
     {
+        lr = GetComponent<LineRenderer>();
+        lr.endWidth = lr.startWidth = 0.3f;
+        
         distance = 10f;
         lasthook = 0;
-        playerRb = GameObject.Find("Player").GetComponent<Rigidbody2D>();
-
+        playerrb = GetComponent<Rigidbody2D>();
         lm = ~(1 << 12);
         hooking = false;
         canHook = true;
@@ -39,34 +42,22 @@ public class Hook : MonoBehaviour
                 canHook = false;
                 Player.nothooking = false;
                 hooking = true;
-                x = hit.point.x - transform.position.x;
-                y = hit.point.y - transform.position.y;
-                if (Mathf.Abs(x) > Mathf.Abs(y))
-                {
-                    y = y / Mathf.Abs(x);
-                    if (x >= 0) x = 1; else x = -1;
-                }
-                else if (Mathf.Abs(y) > Mathf.Abs(x))
-                {
-                    x = x / Mathf.Abs(y);
-                    if (y >= 0) y = 1; else y = -1;
-                }
-                else
-                {
-                    x = y = 1;
-                }
+                
+                lr.enabled = true;
             }
             else print(null);
         }
 
         if (hooking)
         {
-            print(x + "......" + y);
-            playerRb.velocity = new Vector2(x*10,y*10);
+            Vector3[] vect = { transform.position, hit.point };
+            lr.SetPositions(vect);
+            playerrb.velocity = (hit.point - (Vector2) transform.position).normalized * 10;
             if (hook == 0 && lasthook == 1)
             {
+                lr.enabled = false;
                 Player.nothooking = true;
-                playerRb.velocity = Vector2.up;
+                playerrb.velocity = Vector2.up;
                 hooking = false;
             }
         }
@@ -76,6 +67,8 @@ public class Hook : MonoBehaviour
     {
         Player.nothooking = true;
         hooking = false;
+        lr.enabled = false;
+
         if (collision.gameObject.layer == 8)
         {
             canHook = true;

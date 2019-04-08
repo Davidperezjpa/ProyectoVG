@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
 
     //Player stats
     //public int health = 10;
@@ -38,15 +39,18 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     private bool canShoot;
 
-    //Hook
+    
+
 
     // Start is called before the first frame update
     void Start()
     {
+        rb = GetComponent<Rigidbody2D>();
+        sr = GetComponent<SpriteRenderer>();
+
         nothooking = true;
         this.canMove = true;
         this.lookR = true;
-        rb = GetComponent<Rigidbody2D>();
         this.enemyDrop = 0;
         this.canShoot = true;
         this.canDash = true;
@@ -94,7 +98,6 @@ public class Player : MonoBehaviour
         //Sword Attack
         if (s==1 &&lasts==0&& canMove)
         {
-            print(h + ".." + v);
             if (Mathf.Abs(h) > Mathf.Abs(v) || v==0)
             {
                 if (lookR) //Right
@@ -170,60 +173,53 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        // Contact with drop
         if (collider.gameObject.layer == 13)
         {
             this.enemyDrop++;
             Destroy(collider.gameObject);
         }
 
+        // Contact with enemy proyectile
         if (collider.gameObject.layer == 14)
         {
-            if (collider.gameObject.transform.position.x < transform.position.x)
-            {
-                rb.AddForce(new Vector2(10, 0), ForceMode2D.Impulse);
-            }
-            else if (collider.gameObject.transform.position.x < transform.position.x)
-            {
-                rb.AddForce(new Vector2(10 * -1, 0), ForceMode2D.Impulse);
-            }
-            else
-            {
-                rb.AddForce(new Vector2(0, 20), ForceMode2D.Impulse);
-            }
+            StopCoroutine("takeDamage");
+            StartCoroutine("takeDamage");
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
-
-
     private void OnCollisionStay2D(Collision2D collision)
     {
+        // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
         {
-            this.isJumping = false;
-            this.isGrounded = true;
-            this.canDash = true;
+            
 
             RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point,(Vector2)collision.transform.position- collision.GetContact(0).point);
 
             float y = hit.point.y - hit.transform.position.y;
             float limit =(float) collision.transform.lossyScale.y*0.95f / 2;
-            print(limit);
-            if (y >= limit) {
-                print("top");
+            if (y >= limit) { // top
+                this.isJumping = false;
+                this.isGrounded = true;
+                this.canDash = true;
             }
-            else if( y <= -limit) {
-                print("bottom");
+            else if( y <= -limit) { // bottom
+                
             }
-            else {
-                print("side");
+            else { // side
+                this.isJumping = false;
+                this.isGrounded = true;
+                this.canDash = true;
             }
         }    
     }
     
+    IEnumerator takeDamage() {
+        sr.color = Color.red;
+        yield return new WaitForSeconds(1);
+        sr.color = Color.blue;
+    }
 
     IEnumerator dashCooldown()
     {

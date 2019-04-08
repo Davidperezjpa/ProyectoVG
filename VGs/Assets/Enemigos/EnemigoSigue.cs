@@ -10,11 +10,13 @@ public class EnemigoSigue : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    public GameObject drop,
-                      player;
+    public GameObject drop;
+    private GameObject player;
+                      
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.Find("Player");
         current = 0;
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();

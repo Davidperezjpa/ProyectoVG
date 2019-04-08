@@ -7,8 +7,8 @@ public class Hook : MonoBehaviour
 
     private float distance;
     private Vector2 targetPosition;
-    private float lasthook,x,y;
-    private Rigidbody2D playerrb;
+    private float lasthook;
+    private Rigidbody2D rb;
     private LayerMask lm;
     private bool hooking, canHook;
     private LineRenderer lr;
@@ -22,7 +22,7 @@ public class Hook : MonoBehaviour
         
         distance = 10f;
         lasthook = 0;
-        playerrb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         lm = ~(1 << 12);
         hooking = false;
         canHook = true;
@@ -52,12 +52,12 @@ public class Hook : MonoBehaviour
         {
             Vector3[] vect = { transform.position, hit.point };
             lr.SetPositions(vect);
-            playerrb.velocity = (hit.point - (Vector2) transform.position).normalized * 10;
+            rb.velocity = (hit.point - (Vector2) transform.position).normalized * 10;
             if (hook == 0 && lasthook == 1)
             {
                 lr.enabled = false;
                 Player.nothooking = true;
-                playerrb.velocity = Vector2.up;
+                rb.velocity = Vector2.up;
                 hooking = false;
             }
         }

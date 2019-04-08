@@ -10,14 +10,15 @@ public class EnemigoDispara : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    public GameObject drop,
-                      player,
-                      proyectile;
+    public GameObject drop, proyectile;
+
+    private GameObject player;
 
     private bool shooting;
     // Start is called before the first frame update
     void Start()
     {
+        player = GameObject.Find("Player");
         shooting = false;
         current = 0;
         StartCoroutine("Move");

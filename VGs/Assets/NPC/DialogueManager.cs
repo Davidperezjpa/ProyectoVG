@@ -12,22 +12,22 @@ public class DialogueManager : MonoBehaviour
 
     private Queue<string> sentences;
 
-
+   
     
     void Start()
     {
 
         
         sentences = new Queue<string>();        //instancia la queue
-     
 
+        
 
     }
     
 
     public void StartDialogue (Dialogue dialogue)   //Entra el dialogo.
     {
-
+        
         animator.SetBool("IsOpen", true);
 
 
@@ -73,8 +73,9 @@ public class DialogueManager : MonoBehaviour
     IEnumerator EndDialogue()   //termina el dialogo
     {
         dialogueText.text = "End Of conversation.";
-        
+    
         yield return new WaitForSeconds(1f);
+        
         animator.SetBool("IsOpen", false);
 
     }

@@ -60,6 +60,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Enemigos\EnemigoDispara.cs" />
+    <Compile Include="Assets\Enemigos\EnemigoPatrulla.cs" />
+    <Compile Include="Assets\Enemigos\EnemigoSigue.cs" />
+    <Compile Include="Assets\Enemigos\Waypoint.cs" />
     <Compile Include="Assets\NPC\Dialogue.cs" />
     <Compile Include="Assets\NPC\DialogueManager.cs" />
     <Compile Include="Assets\NPC\DialogueTrigger.cs" />

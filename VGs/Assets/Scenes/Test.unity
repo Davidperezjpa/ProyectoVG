@@ -589,6 +589,7 @@ MonoBehaviour:
   nameText: {fileID: 244749658}
   dialogueText: {fileID: 341935727}
   animator: {fileID: 735569718}
+  boton: {fileID: 207111535}
 --- !u!114 &207111538
 MonoBehaviour:
   m_ObjectHideFlags: 0

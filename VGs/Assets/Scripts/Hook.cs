@@ -6,7 +6,6 @@ public class Hook : MonoBehaviour
 {
 
     private float distance;
-    private Vector2 targetPosition;
     private float lasthook;
     private Rigidbody2D rb;
     private LayerMask lm;
@@ -63,7 +62,7 @@ public class Hook : MonoBehaviour
         }
         lasthook = hook;
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         Player.nothooking = true;
         hooking = false;

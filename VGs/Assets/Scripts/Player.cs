@@ -27,7 +27,6 @@ public class Player : MonoBehaviour
     
     //Sword
     public GameObject sword;
-    public static bool nothooking;
     private bool canMove;
     private bool isGrounded;
     private float lasts;
@@ -39,8 +38,14 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     private bool canShoot;
 
-    
-
+    //Hook
+    public static bool nothooking;
+    private float distance;
+    private float lasthook;
+    private LayerMask lm;
+    private bool hooking, canHook;
+    private LineRenderer lr;
+    private RaycastHit2D hit;
 
     // Start is called before the first frame update
     void Start()
@@ -58,6 +63,15 @@ public class Player : MonoBehaviour
         this.isDashing = false;
         this.isGrounded = false;
         this.isJumping = false;
+
+        lr = GetComponent<LineRenderer>();
+        lr.endWidth = lr.startWidth = 0.3f;
+
+        distance = 10f;
+        lasthook = 0;
+        lm = ~(1 << 12);
+        hooking = false;
+        canHook = true;
     }
 
     // Update is called once per frame
@@ -70,6 +84,7 @@ public class Player : MonoBehaviour
         float s = Input.GetAxisRaw("Sword");
         float b = Input.GetAxisRaw("Bullet");
         float d = Input.GetAxisRaw("Dash");
+        float hook = Input.GetAxisRaw("Hook");
         float pause = Input.GetAxisRaw("Pause");
 
 
@@ -163,6 +178,32 @@ public class Player : MonoBehaviour
             lastd = d;
         }
 
+        // Hook
+        if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook) {
+            hit = Physics2D.Raycast(transform.position, new Vector2(h, v), distance, lm);
+            if (hit.collider != null) {
+                canHook = false;
+                nothooking = false;
+                hooking = true;
+
+                lr.enabled = true;
+            }
+            else print(null);
+        }
+
+        if (hooking) {
+            Vector3[] vect = { transform.position, hit.point };
+            lr.SetPositions(vect);
+            rb.velocity = (hit.point - (Vector2)transform.position).normalized * 10;
+            if (hook == 0 && lasthook == 1) {
+                lr.enabled = false;
+                nothooking = true;
+                rb.velocity = Vector2.up;
+                hooking = false;
+            }
+        }
+        lasthook = hook;
+
         //Pause Menu
         if (pause==1)
         {
@@ -186,6 +227,30 @@ public class Player : MonoBehaviour
             StopCoroutine("takeDamage");
             StartCoroutine("takeDamage");
         }
+
+        
+    }
+    private void OnCollisionEnter2D(Collision2D collision) {
+        // Contact with ground
+        nothooking = true;
+        hooking = false;
+        lr.enabled = false;
+        if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15) {
+            RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point, (Vector2)collision.transform.position - collision.GetContact(0).point);
+
+            float y = hit.point.y - hit.transform.position.y;
+            float limit = (float)collision.transform.lossyScale.y * 0.95f / 2;
+            if (y >= limit) { // top
+                this.canHook = true;
+            }
+            else if (y <= -limit) { // bottom
+
+            }
+            else { // side
+                this.canHook = true;
+            }
+            
+        }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
@@ -200,14 +265,16 @@ public class Player : MonoBehaviour
             float y = hit.point.y - hit.transform.position.y;
             float limit =(float) collision.transform.lossyScale.y*0.95f / 2;
             if (y >= limit) { // top
+                print("top");
                 this.isJumping = false;
                 this.isGrounded = true;
                 this.canDash = true;
             }
             else if( y <= -limit) { // bottom
-                
+                print("bottom");
             }
             else { // side
+                print("side");
                 this.isJumping = false;
                 this.isGrounded = true;
                 this.canDash = true;

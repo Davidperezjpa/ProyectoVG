@@ -7,7 +7,7 @@ InputManager:
   m_Axes:
   - serializedVersion: 3
     m_Name: Horizontal
-    descriptiveName: 
+    descriptiveName: M_Horizontal
     descriptiveNegativeName: 
     negativeButton: left
     positiveButton: right
@@ -151,7 +151,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Horizontal
-    descriptiveName: 
+    descriptiveName: C_Horizontal
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: 
@@ -167,7 +167,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Vertical
-    descriptiveName: 
+    descriptiveName: C_Vertical
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: 
@@ -183,7 +183,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Sword
-    descriptiveName: 
+    descriptiveName: C_Sword
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: joystick button 2
@@ -199,7 +199,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Bullet
-    descriptiveName: 
+    descriptiveName: C_Bullet
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: joystick button 5
@@ -215,7 +215,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Dash
-    descriptiveName: 
+    descriptiveName: C_Dash
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: 
@@ -231,7 +231,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Jump
-    descriptiveName: 
+    descriptiveName: C_Jump
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: joystick button 0
@@ -247,7 +247,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Hook
-    descriptiveName: 
+    descriptiveName: C_Hook
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: r
@@ -263,7 +263,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Submit
-    descriptiveName: 
+    descriptiveName: C_Submit
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: enter
@@ -278,11 +278,27 @@ InputManager:
     axis: 0
     joyNum: 0
   - serializedVersion: 3
-    m_Name: none
+    m_Name: Inventory
+    descriptiveName: C_Inventory
+    descriptiveNegativeName: 
+    negativeButton: 
+    positiveButton: i
+    altNegativeButton: 
+    altPositiveButton: 
+    gravity: 1000
+    dead: 0.001
+    sensitivity: 1000
+    snap: 0
+    invert: 0
+    type: 2
+    axis: 0
+    joyNum: 0
+  - serializedVersion: 3
+    m_Name: Inventory
     descriptiveName: 
     descriptiveNegativeName: 
     negativeButton: 
-    positiveButton: left ctrl
+    positiveButton: i
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
@@ -295,7 +311,7 @@ InputManager:
     joyNum: 0
   - serializedVersion: 3
     m_Name: Cancel
-    descriptiveName: 
+    descriptiveName: C_Cancel
     descriptiveNegativeName: 
     negativeButton: 
     positiveButton: left ctrl

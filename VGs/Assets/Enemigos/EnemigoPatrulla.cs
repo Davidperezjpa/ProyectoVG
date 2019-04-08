@@ -11,12 +11,15 @@ public class EnemigoPatrulla : MonoBehaviour
     private Rigidbody2D rb;
 
     public GameObject drop;
+
+    private GameObject player;
     // Start is called before the first frame update
     void Start()
     {
         current = 0;
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame

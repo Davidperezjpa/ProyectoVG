@@ -20,6 +20,7 @@ public class EnemigoSigue : MonoBehaviour
         current = 0;
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame

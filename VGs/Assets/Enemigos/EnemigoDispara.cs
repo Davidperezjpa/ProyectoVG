@@ -10,7 +10,8 @@ public class EnemigoDispara : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    public GameObject drop, proyectile;
+    public GameObject drop,
+                      proyectile;
 
     private GameObject player;
 
@@ -18,11 +19,11 @@ public class EnemigoDispara : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.Find("Player");
         shooting = false;
         current = 0;
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame
@@ -35,7 +36,8 @@ public class EnemigoDispara : MonoBehaviour
                 StartCoroutine("Shoot");
                 shooting = true;
             }
-        } else
+        }
+        else
         {
             if (shooting)
             {

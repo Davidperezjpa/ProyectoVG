@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     private bool lookR;
 
     //Jumping
+    private bool isSide;
+    private bool sideLeft;
     private bool isJumping;
     private float lastj;
 
@@ -59,7 +61,7 @@ public class Player : MonoBehaviour
         this.enemyDrop = 0;
         this.canShoot = true;
         this.canDash = true;
-
+        this.isSide = false;
         this.isDashing = false;
         this.isGrounded = false;
         this.isJumping = false;
@@ -105,7 +107,16 @@ public class Player : MonoBehaviour
         {
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
-            rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
+            if (isSide) {
+                if(sideLeft)
+                    rb.AddForce(new Vector2(-6, 16), ForceMode2D.Impulse);
+                else {
+                    rb.AddForce(new Vector2(6, 16), ForceMode2D.Impulse);
+                }
+            }
+            else {
+                rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
+            }
         }
         this.lastj = j;
         this.isGrounded = false;
@@ -265,23 +276,35 @@ public class Player : MonoBehaviour
             float y = hit.point.y - hit.transform.position.y;
             float limit =(float) collision.transform.lossyScale.y*0.95f / 2;
             if (y >= limit) { // top
-                print("top");
                 this.isJumping = false;
                 this.isGrounded = true;
                 this.canDash = true;
             }
             else if( y <= -limit) { // bottom
-                print("bottom");
+
             }
             else { // side
-                print("side");
+                if (hit.point.x > hit.transform.position.x) {
+                    print("right");
+                    sideLeft = false;
+                }
+                else {
+                    print("left");
+                    sideLeft = true;
+                }
+                this.isSide = true;
                 this.isJumping = false;
                 this.isGrounded = true;
                 this.canDash = true;
             }
         }    
     }
-    
+
+    private void OnCollisionExit2D(Collision2D collision) {
+        print("exit");
+        this.isSide = false;
+    }
+
     IEnumerator takeDamage() {
         sr.color = Color.red;
         yield return new WaitForSeconds(1);

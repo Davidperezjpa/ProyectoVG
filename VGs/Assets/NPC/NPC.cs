@@ -17,7 +17,7 @@ public class NPC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("Inventory"))
+        if (Input.GetAxisRaw("Inventory")==1)
         {
             double distance = Vector2.Distance(transform.position, player.transform.position);
             if (distance <= 5)

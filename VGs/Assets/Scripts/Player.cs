@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     //Player stats
     //public int health = 10;
     private bool lookR;
+    private bool canWalk;
 
     //Jumping
     private bool isSide;
@@ -54,8 +55,8 @@ public class Player : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
-
         nothooking = true;
+        this.canWalk = true;
         this.canMove = true;
         this.lookR = true;
         this.enemyDrop = 0;
@@ -87,7 +88,6 @@ public class Player : MonoBehaviour
         float b = Input.GetAxisRaw("Bullet");
         float d = Input.GetAxisRaw("Dash");
         float hook = Input.GetAxisRaw("Hook");
-        float pause = Input.GetAxisRaw("Pause");
 
 
         //Texto souls
@@ -96,8 +96,8 @@ public class Player : MonoBehaviour
         //Horizontal movement
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
-
-        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking)
+        
+        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking && canWalk)
         {
             transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
         }
@@ -108,15 +108,15 @@ public class Player : MonoBehaviour
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
             if (isSide) {
-                if(sideLeft)
-                    rb.AddForce(new Vector2(-6, 16), ForceMode2D.Impulse);
+                if (sideLeft) {
+                    StartCoroutine(sideMove(-1));
+                }
                 else {
-                    rb.AddForce(new Vector2(6, 16), ForceMode2D.Impulse);
+                    StartCoroutine(sideMove(1));
                 }
             }
-            else {
-                rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
-            }
+            rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
+            
         }
         this.lastj = j;
         this.isGrounded = false;
@@ -215,12 +215,6 @@ public class Player : MonoBehaviour
         }
         lasthook = hook;
 
-        //Pause Menu
-        if (pause==1)
-        {
-            Time.timeScale = 0;
-
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -285,11 +279,9 @@ public class Player : MonoBehaviour
             }
             else { // side
                 if (hit.point.x > hit.transform.position.x) {
-                    print("right");
                     sideLeft = false;
                 }
                 else {
-                    print("left");
                     sideLeft = true;
                 }
                 this.isSide = true;
@@ -301,8 +293,16 @@ public class Player : MonoBehaviour
     }
 
     private void OnCollisionExit2D(Collision2D collision) {
-        print("exit");
         this.isSide = false;
+    }
+    IEnumerator sideMove(int dir) {
+        canMove = canWalk = false;
+        float time = Time.time;
+        while (time+0.3f>Time.time) {
+            transform.Translate(0.15f*dir-(float)(Time.time-time)/4, 0, 0, Space.World);
+            yield return new WaitForFixedUpdate();
+        }
+        canMove = canWalk = true;
     }
 
     IEnumerator takeDamage() {

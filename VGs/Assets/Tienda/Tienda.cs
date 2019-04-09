@@ -6,11 +6,12 @@ public class Tienda : MonoBehaviour
 {
 
     public GameObject player;
+    private Player pscript;
     
     // Start is called before the first frame update
     void Start()
     {
-        
+        pscript = player.GetComponent<Player>();
     }
 
     // Update is called once per frame
@@ -21,22 +22,14 @@ public class Tienda : MonoBehaviour
 
     public void MejoraVida()
     {
-
-        print("mejoraste la vida :D");
-        //player.SetLife();
-
+        pscript.SetHealth(10);
     }
 
-    public void MejoraEspada()
-    {
-        print("mejoraste la espada :D");
-        //player.SetSword();
+    public void MejoraEspada() {
     }
 
     public void MejoraSpeed()
     {
-        print("mejoraste la speed :D");
-        //player.SetSpeed();
+            pscript.SetSpeed(1);
     }
-
 }

@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
-    private int health;
+    private int health,speed;
     private bool lookR;
     private bool canTakeDamage;
     private bool canWalk;
@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.speed = 5;
         this.health = 100;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
@@ -103,7 +104,7 @@ public class Player : MonoBehaviour
         
         if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking && canWalk)
         {
-            transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
+            transform.Translate(h * speed * Time.deltaTime, 0, 0, Space.World);
         }
 
         //Jumping movement
@@ -302,6 +303,28 @@ public class Player : MonoBehaviour
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
             this.isSide = false;
     }
+
+    public int GetHealth() {
+        return this.health;
+    }
+    public void SetHealth(int health) {
+        this.health += health;
+        if (this.health > 100) {
+            this.health = 100;
+        }
+    }
+
+    public int GetSpeed() {
+        return this.speed;
+    }
+    public void SetSpeed(int speed) {
+        this.speed += speed;
+        if (this.speed > 10) {
+            this.speed = 10;
+        }
+    }
+
+
     IEnumerator sideMove(int dir) {
         canMove = canWalk = false;
         float time = Time.time;
@@ -328,7 +351,6 @@ public class Player : MonoBehaviour
         rb.velocity = new Vector2(0,rb.velocity.y);
         yield return new WaitForSeconds(0.4f);
         this.isDashing = false;
-        StopCoroutine(dashCooldown());
     }
 
     IEnumerator swordCooldown()
@@ -340,13 +362,11 @@ public class Player : MonoBehaviour
         }
         yield return new WaitForSeconds(0.1f);
         canMove = true;
-        StopCoroutine(swordCooldown());
     }
     IEnumerator bulletCooldown()
     {
         this.canShoot = false;
         yield return new WaitForSeconds(1);
         this.canShoot = true;
-        StopCoroutine(bulletCooldown());
     }
 }

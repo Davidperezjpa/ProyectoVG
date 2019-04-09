@@ -6,15 +6,13 @@ public class NPC : MonoBehaviour
 {
     public GameObject player;
     public Dialogue dialogue;
-    private bool dialogueActive;
-
-
+    private float distance;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        dialogueActive = false;
+
     }
 
     // Update is called once per frame
@@ -22,34 +20,13 @@ public class NPC : MonoBehaviour
     {
         if (Input.GetAxisRaw("Inventory") == 1)
         {
-            double distance = Vector2.Distance(transform.position, player.transform.position);
-            if (distance <= 5)
+            distance = Vector2.Distance(transform.position, player.transform.position);
+            if (distance <= 5) 
             {
-                dialogueActive = true;
-
-                if (dialogueActive == true)
-                {
-                    dialogueActive = false;
-                    TriggerDialogue();
-
-                }
-                
-
-                
-                  
-
-                
-
-
-
+                StopCoroutine("OpenStore");
+                StartCoroutine("OpenStore");
+                TriggerDialogue();
             }
-            else
-            {
-                //dialogueActive = false;
-            }
-            
-
-
         }
     }
 
@@ -57,5 +34,15 @@ public class NPC : MonoBehaviour
     {
         FindObjectOfType<DialogueManager>().StartDialogue(dialogue);
     }
+    public void CloseDialogue() {
+        FindObjectOfType<DialogueManager>().StopDialogue();
+    }
 
+    IEnumerator OpenStore() {
+        while (distance<=5) {
+            distance = Vector2.Distance(transform.position, player.transform.position);
+            yield return new WaitForSeconds(0.1f);
+        }
+        CloseDialogue();
+    }
 }

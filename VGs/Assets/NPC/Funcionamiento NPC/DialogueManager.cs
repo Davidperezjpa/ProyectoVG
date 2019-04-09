@@ -29,14 +29,7 @@ public class DialogueManager : MonoBehaviour
     {
         
         animator.SetBool("IsOpen", true);
-
-
-        //Debug.Log("Starting conversation with " + dialogue.nameNPC);      para mostrar en consola el nombre
         nameText.text = dialogue.nameNPC;
-
-            
-        
-
         sentences.Clear();
 
         foreach (string sentence in dialogue.sentences)     //pone en un queue las oraciones
@@ -47,6 +40,9 @@ public class DialogueManager : MonoBehaviour
 
         DisplayNextSentences();
 
+    }
+    public void StopDialogue() {
+        StartCoroutine("EndDialogue");
     }
 
 
@@ -73,7 +69,6 @@ public class DialogueManager : MonoBehaviour
     IEnumerator EndDialogue()   //termina el dialogo
     {
         dialogueText.text = "End Of conversation.";
-    
         yield return new WaitForSeconds(1f);
         
         animator.SetBool("IsOpen", false);

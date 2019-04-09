@@ -9,7 +9,7 @@ public class Sword : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
-        transform.SetParent(player.transform);
+        transform.parent = player.transform;
     }
 
     // Update is called once per frame

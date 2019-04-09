@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
-    public GameObject player;
+    private GameObject player;
     public Dialogue dialogue;
     private float distance;
 
@@ -12,7 +12,7 @@ public class NPC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        player = GameObject.Find("Player");
     }
 
     // Update is called once per frame

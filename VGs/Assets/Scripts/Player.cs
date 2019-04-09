@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
-    private int health,speed;
+    public int health,speed;
     private bool lookR;
     private bool canTakeDamage;
     private bool canWalk;
@@ -27,7 +27,7 @@ public class Player : MonoBehaviour
 
     //Enemy drop score
     public Text soul, life;
-    private int enemyDrop;
+    public int enemyDrop;
     
     //Sword
     public GameObject sword;
@@ -92,11 +92,13 @@ public class Player : MonoBehaviour
         float b = Input.GetAxisRaw("Bullet");
         float d = Input.GetAxisRaw("Dash");
         float hook = Input.GetAxisRaw("Hook");
+        float pause = Input.GetAxisRaw("Pause");
+
 
 
         //Texto souls
-        soul.text = "Soul: " + enemyDrop;
-        life.text = "Life: " + health;
+       //soul.text = "Soul: " + enemyDrop;
+        //life.text = "Life: " + health;
 
         //Horizontal movement
         if (h > 0.6) lookR = true;
@@ -220,6 +222,30 @@ public class Player : MonoBehaviour
         }
         lasthook = hook;
 
+        if (pause == 1)
+        {
+            Time.timeScale = 0;
+            GenericWindow.manager.Open(1);
+            
+        }
+
+        //Muerte por vida = 0
+        if (health == 0)
+        {
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        //Abre ventana de GameOver
+        GenericWindow.manager.Open(2);
+        //Congelar el tiempo por pausa
+        Time.timeScale = 0;
+
+        //Guarda estado del juego
+
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collider)

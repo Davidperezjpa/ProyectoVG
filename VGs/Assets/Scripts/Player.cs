@@ -9,7 +9,10 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
-    //public int health = 10;
+
+    //Health
+    public int health;
+
     private bool lookR;
 
     //Jumping
@@ -24,7 +27,11 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
+<<<<<<< HEAD
+    public int enemyDrop;
+=======
     private int enemyDrop;
+>>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
     
     //Sword
     public GameObject sword;
@@ -48,6 +55,28 @@ public class Player : MonoBehaviour
     private LineRenderer lr;
     private RaycastHit2D hit;
 
+
+    //Setters y getters de salud y souls
+    public int GetHealth()
+    {
+        return health;
+    }
+
+    public void SetHealth(int newHealth)
+    {
+        health = newHealth;
+    }
+
+    public int GetSouls()
+    {
+        return enemyDrop;
+    }
+
+    public void SetEnemyDrop(int newEnemyDrop)
+    {
+        enemyDrop = newEnemyDrop;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,6 +86,7 @@ public class Player : MonoBehaviour
         nothooking = true;
         this.canMove = true;
         this.lookR = true;
+        this.health = 100;
         this.enemyDrop = 0;
         this.canShoot = true;
         this.canDash = true;
@@ -211,12 +241,40 @@ public class Player : MonoBehaviour
         }
         lasthook = hook;
 
+<<<<<<< HEAD
+        //FUnciones de UI
+        //Activar Menu de Pausa
+        if (pause == 1)
+        {
+            GenericWindow.manager.Open(1);
+            Time.timeScale = 0;
+        }
+
+        //Muerte por vida = 0
+        if (health == 0)
+        {
+            GameOver();
+        }
+    }
+
+    //Guarda el estado del juego y manda a ventana Game Over
+    private void GameOver()
+    {
+        //Congelar el tiempo por pausa
+        Time.timeScale = 0;
+
+        //Guarda estado del juego
+
+        //Abre ventana de GameOver
+        GenericWindow.manager.Open(2);
+=======
         //Pause Menu
         if (pause==1)
         {
             Time.timeScale = 0;
 
         }
+>>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -238,11 +296,18 @@ public class Player : MonoBehaviour
         
     }
     private void OnCollisionEnter2D(Collision2D collision) {
-        // Contact with ground
-        nothooking = true;
-        hooking = false;
-        lr.enabled = false;
+        // collision with enemy
+        if (collision.gameObject.layer == 10)
+        {
+            StopCoroutine("takeDamage");
+            StartCoroutine("takeDamage");
+        }
+
+        // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15) {
+            nothooking = true;
+            hooking = false;
+            lr.enabled = false;
             RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point, (Vector2)collision.transform.position - collision.GetContact(0).point);
 
             float y = hit.point.y - hit.transform.position.y;
@@ -297,12 +362,18 @@ public class Player : MonoBehaviour
     }
 
     private void OnCollisionExit2D(Collision2D collision) {
+<<<<<<< HEAD
+        if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
+            this.isSide = false;
+=======
         print("exit");
         this.isSide = false;
+>>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
     }
 
     IEnumerator takeDamage() {
         sr.color = Color.red;
+        this.health -= 10;
         yield return new WaitForSeconds(1);
         sr.color = Color.blue;
     }

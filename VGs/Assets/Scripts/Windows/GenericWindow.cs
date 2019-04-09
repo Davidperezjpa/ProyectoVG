@@ -9,14 +9,14 @@ public class GenericWindow : MonoBehaviour
 
     public GameObject firstSelected;
 
-    protected EventSystem eventSystem
+    protected EventSystem evenSystem
     {
         get { return GameObject.Find("EventSystem").GetComponent<EventSystem>(); }
     }
 
     public virtual void OnFocus()
     {
-        eventSystem.SetSelectedGameObject(firstSelected);
+        evenSystem.SetSelectedGameObject(firstSelected);
     }
 
     protected virtual void Display(bool value)

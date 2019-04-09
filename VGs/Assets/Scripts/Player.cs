@@ -9,11 +9,9 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
-
-    //Health
-    public int health;
-
+    private int health;
     private bool lookR;
+    private bool canWalk;
 
     //Jumping
     private bool isSide;
@@ -27,11 +25,8 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
-<<<<<<< HEAD
-    public int enemyDrop;
-=======
+    public Text textito;
     private int enemyDrop;
->>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
     
     //Sword
     public GameObject sword;
@@ -55,38 +50,16 @@ public class Player : MonoBehaviour
     private LineRenderer lr;
     private RaycastHit2D hit;
 
-
-    //Setters y getters de salud y souls
-    public int GetHealth()
-    {
-        return health;
-    }
-
-    public void SetHealth(int newHealth)
-    {
-        health = newHealth;
-    }
-
-    public int GetSouls()
-    {
-        return enemyDrop;
-    }
-
-    public void SetEnemyDrop(int newEnemyDrop)
-    {
-        enemyDrop = newEnemyDrop;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
+        this.health = 10;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
-
         nothooking = true;
+        this.canWalk = true;
         this.canMove = true;
         this.lookR = true;
-        this.health = 100;
         this.enemyDrop = 0;
         this.canShoot = true;
         this.canDash = true;
@@ -116,14 +89,16 @@ public class Player : MonoBehaviour
         float b = Input.GetAxisRaw("Bullet");
         float d = Input.GetAxisRaw("Dash");
         float hook = Input.GetAxisRaw("Hook");
-        float pause = Input.GetAxisRaw("Pause");
 
+
+        //Texto souls
+        textito.text = "Soul: " + enemyDrop;
 
         //Horizontal movement
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
-
-        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking)
+        
+        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking && canWalk)
         {
             transform.Translate(h * 5 * Time.deltaTime, 0, 0, Space.World);
         }
@@ -134,15 +109,15 @@ public class Player : MonoBehaviour
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
             if (isSide) {
-                if(sideLeft)
-                    rb.AddForce(new Vector2(-6, 16), ForceMode2D.Impulse);
+                if (sideLeft) {
+                    StartCoroutine(sideMove(-1));
+                }
                 else {
-                    rb.AddForce(new Vector2(6, 16), ForceMode2D.Impulse);
+                    StartCoroutine(sideMove(1));
                 }
             }
-            else {
-                rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
-            }
+            rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
+            
         }
         this.lastj = j;
         this.isGrounded = false;
@@ -241,40 +216,6 @@ public class Player : MonoBehaviour
         }
         lasthook = hook;
 
-<<<<<<< HEAD
-        //FUnciones de UI
-        //Activar Menu de Pausa
-        if (pause == 1)
-        {
-            GenericWindow.manager.Open(1);
-            Time.timeScale = 0;
-        }
-
-        //Muerte por vida = 0
-        if (health == 0)
-        {
-            GameOver();
-        }
-    }
-
-    //Guarda el estado del juego y manda a ventana Game Over
-    private void GameOver()
-    {
-        //Congelar el tiempo por pausa
-        Time.timeScale = 0;
-
-        //Guarda estado del juego
-
-        //Abre ventana de GameOver
-        GenericWindow.manager.Open(2);
-=======
-        //Pause Menu
-        if (pause==1)
-        {
-            Time.timeScale = 0;
-
-        }
->>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -297,11 +238,11 @@ public class Player : MonoBehaviour
     }
     private void OnCollisionEnter2D(Collision2D collision) {
         // collision with enemy
-        if (collision.gameObject.layer == 10)
-        {
+        if (collision.gameObject.layer == 10) {
             StopCoroutine("takeDamage");
             StartCoroutine("takeDamage");
         }
+
 
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15) {
@@ -320,8 +261,7 @@ public class Player : MonoBehaviour
             }
             else { // side
                 this.canHook = true;
-            }
-            
+            }   
         }
     }
 
@@ -330,8 +270,6 @@ public class Player : MonoBehaviour
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
         {
-            
-
             RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point,(Vector2)collision.transform.position- collision.GetContact(0).point);
 
             float y = hit.point.y - hit.transform.position.y;
@@ -346,11 +284,9 @@ public class Player : MonoBehaviour
             }
             else { // side
                 if (hit.point.x > hit.transform.position.x) {
-                    print("right");
                     sideLeft = false;
                 }
                 else {
-                    print("left");
                     sideLeft = true;
                 }
                 this.isSide = true;
@@ -362,18 +298,22 @@ public class Player : MonoBehaviour
     }
 
     private void OnCollisionExit2D(Collision2D collision) {
-<<<<<<< HEAD
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
             this.isSide = false;
-=======
-        print("exit");
-        this.isSide = false;
->>>>>>> 615d7e277024eaf2ab2dc36dce6e9be5c684dc93
+    }
+    IEnumerator sideMove(int dir) {
+        canMove = canWalk = false;
+        float time = Time.time;
+        while (time+0.3f>Time.time) {
+            transform.Translate(0.15f*dir-(float)(Time.time-time)/4, 0, 0, Space.World);
+            yield return new WaitForFixedUpdate();
+        }
+        canMove = canWalk = true;
     }
 
     IEnumerator takeDamage() {
         sr.color = Color.red;
-        this.health -= 10;
+        this.health -= 1;
         yield return new WaitForSeconds(1);
         sr.color = Color.blue;
     }

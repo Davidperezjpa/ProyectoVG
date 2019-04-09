@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     //Player stats
     private int health;
     private bool lookR;
+    private bool canTakeDamage;
     private bool canWalk;
 
     //Jumping
@@ -25,7 +26,7 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
-    public Text textito;
+    public Text soul, life;
     private int enemyDrop;
     
     //Sword
@@ -53,10 +54,11 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        this.health = 10;
+        this.health = 100;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         nothooking = true;
+        this.canTakeDamage = true;
         this.canWalk = true;
         this.canMove = true;
         this.lookR = true;
@@ -92,7 +94,8 @@ public class Player : MonoBehaviour
 
 
         //Texto souls
-        textito.text = "Soul: " + enemyDrop;
+        soul.text = "Soul: " + enemyDrop;
+        life.text = "Life: " + health;
 
         //Horizontal movement
         if (h > 0.6) lookR = true;
@@ -228,22 +231,16 @@ public class Player : MonoBehaviour
         }
 
         // Contact with enemy proyectile
-        if (collider.gameObject.layer == 14)
+        if (collider.gameObject.layer == 14 && canTakeDamage)
         {
-            StopCoroutine("takeDamage");
             StartCoroutine("takeDamage");
+            Destroy(collider.gameObject);
         }
 
-        
+
     }
     private void OnCollisionEnter2D(Collision2D collision) {
-        // collision with enemy
-        if (collision.gameObject.layer == 10) {
-            StopCoroutine("takeDamage");
-            StartCoroutine("takeDamage");
-        }
-
-
+        
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15) {
             nothooking = true;
@@ -267,6 +264,10 @@ public class Player : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
+        // collision with enemy
+        if (collision.gameObject.layer == 10 && canTakeDamage) {
+            StartCoroutine("takeDamage");
+        }
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
         {
@@ -312,10 +313,13 @@ public class Player : MonoBehaviour
     }
 
     IEnumerator takeDamage() {
+        canTakeDamage = false;
         sr.color = Color.red;
-        this.health -= 1;
+        this.health -= 10;
+        if (health < 0) health = 0;
         yield return new WaitForSeconds(1);
         sr.color = Color.blue;
+        canTakeDamage = true;
     }
 
     IEnumerator dashCooldown()

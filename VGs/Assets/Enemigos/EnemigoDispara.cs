@@ -29,7 +29,7 @@ public class EnemigoDispara : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Vector2.Distance(player.transform.position, transform.position) < 10)
+        if (Vector2.Distance(player.transform.position, transform.position) < 20)
         {
             if (!shooting)
             {
@@ -71,7 +71,8 @@ public class EnemigoDispara : MonoBehaviour
         {
             yield return new WaitForSeconds(2f);
             GameObject bulletI = Instantiate(proyectile, transform.position, transform.rotation);
-            bulletI.GetComponent<Rigidbody2D>().AddForce(new Vector2(player.transform.position.x - bulletI.transform.position.x, player.transform.position.y - bulletI.transform.position.y), ForceMode2D.Impulse);
+            Destroy(bulletI, 5);
+            bulletI.GetComponent<Rigidbody2D>().AddForce(new Vector2(player.transform.position.x - bulletI.transform.position.x, player.transform.position.y - bulletI.transform.position.y).normalized * 7, ForceMode2D.Impulse);
 
         }
     }

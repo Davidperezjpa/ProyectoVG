@@ -9,10 +9,11 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
-    public int health,speed;
+    public int health,speed,experience,level;
     private bool lookR;
     private bool canTakeDamage;
     private bool canWalk;
+    
 
     //Jumping
     private bool isSide;
@@ -26,7 +27,6 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
-    public Text soul, life;
     public int enemyDrop;
     
     //Sword
@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
     {
         this.speed = 5;
         this.health = 100;
+        this.experience = 0;
+        this.level = 0;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         nothooking = true;
@@ -94,11 +96,13 @@ public class Player : MonoBehaviour
         float hook = Input.GetAxisRaw("Hook");
         float pause = Input.GetAxisRaw("Pause");
 
+        //PRUEBA EXP------
+        //print("exp: " + experience + "   " + "lvl: " + level);
+        
+        //--------
 
 
-        //Texto souls
-       //soul.text = "Soul: " + enemyDrop;
-        //life.text = "Life: " + health;
+        
 
         //Horizontal movement
         if (h > 0.6) lookR = true;
@@ -348,6 +352,22 @@ public class Player : MonoBehaviour
         if (this.speed > 10) {
             this.speed = 10;
         }
+    }
+
+    public void GainExperience(int exp)
+    {
+        this.experience += exp;
+        if (this.experience >= 100)
+        {
+            this.level += 1;
+            this.experience = 0;
+            
+        }
+    }
+
+    public int GetExperience()
+    {
+        return this.experience;
     }
 
 

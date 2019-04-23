@@ -82,6 +82,7 @@ public class EnemigoDispara : MonoBehaviour
         //When a proyectile hits the enemy
         if (collider.gameObject.layer == 11)
         {
+            player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
             Instantiate(drop, transform.position, transform.localRotation);
             Destroy(collider.gameObject);
             Destroy(this.gameObject);
@@ -93,6 +94,7 @@ public class EnemigoDispara : MonoBehaviour
     {
         if (collision.gameObject.layer == 16)
         {
+            player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
             Instantiate(drop, transform.position, transform.localRotation);
             Destroy(this.gameObject);
         }

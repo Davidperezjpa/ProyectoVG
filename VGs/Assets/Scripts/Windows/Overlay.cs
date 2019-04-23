@@ -10,7 +10,8 @@ public class Overlay : GenericWindow
 
     //Elementos del panel
     public Text enemyDropText,
-                healthText;
+                healthText,
+                levelText;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,7 @@ public class Overlay : GenericWindow
     {
         healthText.text = "Health: " + player.health;
         enemyDropText.text = "Soul: " + player.enemyDrop;
+        levelText.text = "Lvl: " + player.level;
 
     }
 }

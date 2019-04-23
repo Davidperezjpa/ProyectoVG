@@ -49,6 +49,7 @@ public class EnemigoPatrulla : MonoBehaviour
         //When a proyectile hits the enemy
         if (collider.gameObject.layer == 11)
         {
+            player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
             Instantiate(drop, transform.position, transform.localRotation);
             Destroy(collider.gameObject);
             Destroy(this.gameObject);
@@ -58,8 +59,10 @@ public class EnemigoPatrulla : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //When You hit it with the sword
         if (collision.gameObject.layer == 16)
         {
+            player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
             Instantiate(drop, transform.position, transform.localRotation);
             Destroy(this.gameObject);
         }

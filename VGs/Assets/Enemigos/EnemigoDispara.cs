@@ -8,6 +8,9 @@ public class EnemigoDispara : MonoBehaviour
     public float treshold;
     private int current;
 
+    private int currentHealth;
+    private int maxHealth = 100;
+
     private Rigidbody2D rb;
 
     public GameObject drop,
@@ -24,6 +27,7 @@ public class EnemigoDispara : MonoBehaviour
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -46,6 +50,14 @@ public class EnemigoDispara : MonoBehaviour
             }
         }
         transform.position = Vector2.MoveTowards(transform.position, path[current].transform.position, Time.deltaTime * 3);
+
+    }
+
+    public void ModifyHealth(int amount)
+    {
+        currentHealth += amount;
+
+        float currentHealthPct = (float)currentHealth / (float)maxHealth;
 
     }
 
@@ -82,21 +94,43 @@ public class EnemigoDispara : MonoBehaviour
         //When a proyectile hits the enemy
         if (collider.gameObject.layer == 11)
         {
-            player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
-            Instantiate(drop, transform.position, transform.localRotation);
-            Destroy(collider.gameObject);
-            Destroy(this.gameObject);
+            ModifyHealth(-25);
+            print("Pego proyectil current Hp: " + currentHealth);
+            if (currentHealth < 0)
+            {
+                player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
+                Instantiate(drop, transform.position, transform.localRotation);
+                Destroy(collider.gameObject);
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                Destroy(collider.gameObject);
+            }
+
         }
 
     }
 
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //When Sword hits the enemy
         if (collision.gameObject.layer == 16)
         {
-            player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
-            Instantiate(drop, transform.position, transform.localRotation);
-            Destroy(this.gameObject);
+            print("Pego espada current Hp: " + currentHealth);
+            ModifyHealth(-50);
+            if (currentHealth < 0)
+            {
+                player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
+                Instantiate(drop, transform.position, transform.localRotation);
+                Destroy(this.gameObject);
+            }
+            else
+            {
+
+            }
+
         }
     }
 }

@@ -32,7 +32,7 @@ public class ExperienceBar : MonoBehaviour
     {
         float expNormalized = (player.GetComponent<Player>().GetExperience());
         expNormalized = expNormalized / 100;
-        print(expNormalized);
+        
 
 
         Rect uvRect = barRawImage.uvRect;   //da el efecto que se mueve la barra

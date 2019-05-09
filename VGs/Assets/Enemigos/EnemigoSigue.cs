@@ -8,6 +8,7 @@ public class EnemigoSigue : MonoBehaviour
     public float treshold;
     private int current;
 
+    public Canvas canvas;
     //Propiedades del Enemigo
     private int maxHealth = 100;
     private int currentHealth;
@@ -39,6 +40,16 @@ public class EnemigoSigue : MonoBehaviour
         {
             transform.position = Vector2.MoveTowards(transform.position, path[current].transform.position, Time.deltaTime * 3);
         }
+        //para que se esconda la HealthBar
+        if (currentHealth == maxHealth)
+        {
+            canvas.enabled = false;
+        }
+        else
+        {
+            canvas.enabled = true;
+        }
+
 
     }
 

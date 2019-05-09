@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemy: {fileID: 6686570887790948138}
+  canvas: {fileID: 1251864333}
 --- !u!1 &528839713
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,6 +818,7 @@ MonoBehaviour:
   - {fileID: 8136324428908660616}
   - {fileID: 5140407802053441664}
   treshold: 1
+  canvas: {fileID: 1251864333}
   drop: {fileID: 7097679144413605905, guid: 059213f0562898f44ac388c1a917d310, type: 3}
 --- !u!50 &8705895083163120593
 Rigidbody2D:

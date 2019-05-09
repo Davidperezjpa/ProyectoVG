@@ -7,8 +7,9 @@ public class EnemigoPatrulla : MonoBehaviour
     public Waypoint[] path;
     public float treshold;
     private int current;
-    
 
+    public Canvas canvas;
+    //Propiedades del Enemigo
     private int currentHealth;
     private int maxHealth = 100;
 
@@ -17,6 +18,7 @@ public class EnemigoPatrulla : MonoBehaviour
     public GameObject drop;
 
     private GameObject player;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +35,15 @@ public class EnemigoPatrulla : MonoBehaviour
     void Update()
     {
         transform.position = Vector2.MoveTowards(transform.position, path[current].transform.position, Time.deltaTime * 3);
+        //para que se esconda la HealthBar
+        if (currentHealth == maxHealth)
+        {
+            canvas.enabled = false;
+        }
+        else
+        {
+            canvas.enabled = true;
+        }
     }
 
 
@@ -48,9 +59,6 @@ public class EnemigoPatrulla : MonoBehaviour
         return currentHealth;
     }
 
-    private void GotDamaged() {
-
-    }
 
     IEnumerator Move()
     {

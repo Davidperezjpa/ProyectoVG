@@ -48,6 +48,9 @@ public class EnemigoPatrulla : MonoBehaviour
         return currentHealth;
     }
 
+    private void GotDamaged() {
+
+    }
 
     IEnumerator Move()
     {

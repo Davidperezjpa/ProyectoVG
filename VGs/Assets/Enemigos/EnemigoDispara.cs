@@ -8,17 +8,17 @@ public class EnemigoDispara : MonoBehaviour
     public float treshold;
     private int current;
 
+    public Canvas canvas;
+    //Propiedades del Enemigo
     private int currentHealth;
     private int maxHealth = 100;
 
     private Rigidbody2D rb;
 
-    public GameObject drop,
-                      proyectile;
-
+    public GameObject drop, proyectile;
     private GameObject player;
-
     private bool shooting;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +50,15 @@ public class EnemigoDispara : MonoBehaviour
             }
         }
         transform.position = Vector2.MoveTowards(transform.position, path[current].transform.position, Time.deltaTime * 3);
+        //para que se esconda la HealthBar
+        if (currentHealth == maxHealth)
+        {
+            canvas.enabled = false;
+        }
+        else
+        {
+            canvas.enabled = true;
+        }
 
     }
 

@@ -453,6 +453,7 @@ MonoBehaviour:
   - {fileID: 8136324428908660616}
   - {fileID: 5140407802053441664}
   treshold: 1
+  canvas: {fileID: 994275035036364596}
   drop: {fileID: 7097679144413605905, guid: 059213f0562898f44ac388c1a917d310, type: 3}
   proyectile: {fileID: 865798775518400253, guid: 5ff6065f7ffece242a442df0f752b7e0,
     type: 3}

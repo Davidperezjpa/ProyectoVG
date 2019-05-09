@@ -7,6 +7,7 @@ public class EnemigoPatrulla : MonoBehaviour
     public Waypoint[] path;
     public float treshold;
     private int current;
+    
 
     private int currentHealth;
     private int maxHealth = 100;
@@ -23,6 +24,7 @@ public class EnemigoPatrulla : MonoBehaviour
         StartCoroutine("Move");
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
+
         currentHealth = maxHealth;
 
     }
@@ -69,13 +71,14 @@ public class EnemigoPatrulla : MonoBehaviour
         if (collider.gameObject.layer == 11)
         {
             ModifyHealth(-25);
-            print("Pego proyectil current Hp: " + currentHealth);
-            if (currentHealth < 0)
+            print("EP Pego proyectil current Hp: " + currentHealth);
+            if (currentHealth <= 0)
             {
                 player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
                 Instantiate(drop, transform.position, transform.localRotation);
                 Destroy(collider.gameObject);
-                Destroy(this.gameObject);
+                Destroy(transform.parent.gameObject);       //destruye el enemigo con todo y sus waypoints
+
             }
             else
             {
@@ -94,7 +97,7 @@ public class EnemigoPatrulla : MonoBehaviour
         {
             print("Pego espada current Hp: " + currentHealth);
             ModifyHealth(-50);
-            if (currentHealth < 0)
+            if (currentHealth <= 0)
             {
                 player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
                 Instantiate(drop, transform.position, transform.localRotation);

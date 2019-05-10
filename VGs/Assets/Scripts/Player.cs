@@ -72,19 +72,21 @@ public class Player : MonoBehaviour
     public Transform[] respawns;
     private Vector3 lastTouched;
     private Vector3 initialPosition;
-    public bool dashIsObtained;
-    public bool hookIsObtained;
-    public bool gunIsObtained;
-    public bool climbIsObtained;
+    public bool dashIsObtained,hookIsObtained,gunIsObtained,climbIsObtained;
     public AudioSource foundIt;
     public AudioSource cantAffordIt;
 
+    public GameObject effects;
+    private AudioActions aa;
+    private bool walkingAudio;
     //Boss
     public Transform portal;
 
     // Start is called before the first frame update
     void Start()
     {
+        walkingAudio = true;
+        aa = effects.GetComponent<AudioActions>();
         this.speed = 5;
         this.health = 100;
         this.experience = 0;
@@ -146,18 +148,17 @@ public class Player : MonoBehaviour
 
 
         //Horizontal movement
+        
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
 
         if ((canMove || !isGrounded) && Mathf.Abs(h) > 0.6 && nothooking && canWalk)
         {
             animator.SetBool("IsRunning", true);
-            /*
-            if (!audioSrc.isPlaying) {
-                audioSrc.clip = walk[Random.Range(0, 9)];
-                audioSrc.Play();
+            if (walkingAudio) {
+                aa.PlayWalk();
+                walkingAudio = false;
             }
-            */
             transform.Translate(h * speed * Time.deltaTime, 0, 0, Space.World);
             if (lookR == true)
             {
@@ -171,12 +172,15 @@ public class Player : MonoBehaviour
         }
         else
         {
+            aa.StopWalk();
+            walkingAudio = true;
             animator.SetBool("IsRunning", false);
         }
 
         //Jumping movement
         if (j == 1 && lastj == 0 && !this.isJumping && canMove)
         {
+            aa.PlayJump();
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
             if (isSide)
@@ -224,6 +228,7 @@ public class Player : MonoBehaviour
             {
                 Instantiate(sword, down.position, down.rotation);
             }
+            aa.PlaySword();
             StartCoroutine(swordCooldown());
             lasts = s;
         }
@@ -235,11 +240,13 @@ public class Player : MonoBehaviour
 
             if (lookR) // Right
             {
+                aa.PlayShoot();
                 Instantiate(bullet, handR.position, handR.rotation);
                 StartCoroutine(bulletCooldown());
             }
             else if (!lookR) //Left
             {
+                aa.PlayShoot();
                 Instantiate(bullet, handL.position, handL.rotation);
                 StartCoroutine(bulletCooldown());
             }
@@ -251,6 +258,7 @@ public class Player : MonoBehaviour
             canDash = false;
             if (lookR) //Derecha
             {
+                aa.PlayDash();
                 sr.flipX = false;
                 animator.SetBool("IsDashing", true);
                 this.isDashing = true;
@@ -260,6 +268,7 @@ public class Player : MonoBehaviour
             }
             else if (!lookR) // Izquierda
             {
+                aa.PlayDash();
                 sr.flipX = true;
                 animator.SetBool("IsDashing", true);
                 this.isDashing = true;
@@ -276,6 +285,7 @@ public class Player : MonoBehaviour
         // Hook
         if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook && this.hookIsObtained)
         {
+            aa.PlayHook();
             hit = Physics2D.Raycast(transform.position, new Vector2(h, v), distance, lm);
             if (hit.collider != null)
             {

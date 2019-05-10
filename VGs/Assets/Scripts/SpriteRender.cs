@@ -1,0 +1,19 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpriteRender : MonoBehaviour
+{
+    private SpriteRenderer sr;
+    // Start is called before the first frame update
+    void Start()
+    {
+        sr = gameObject.GetComponent<SpriteRenderer>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        sr.size = new Vector2(1, 1);
+    }
+}

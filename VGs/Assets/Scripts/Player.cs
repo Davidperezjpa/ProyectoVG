@@ -8,12 +8,18 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer sr;
 
+    //Animation
+    public GameObject render;
+    private Animator animator;
+
+
     //Player stats
-    public int health,speed,experience,level;
+    [HideInInspector]
+    public int health, speed, experience, level;
     private bool lookR;
     private bool canTakeDamage;
     private bool canWalk;
-    
+
 
     //Jumping
     private bool isSide;
@@ -27,8 +33,9 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
+    [HideInInspector]
     public int enemyDrop;
-    
+
     //Sword
     public GameObject sword;
     private bool canMove;
@@ -51,6 +58,10 @@ public class Player : MonoBehaviour
     private LineRenderer lr;
     private RaycastHit2D hit;
 
+    //Sounds
+    public AudioSource audioSrc;
+    public AudioClip[] walk;
+    public AudioClip attack, jump, dash;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,7 +70,8 @@ public class Player : MonoBehaviour
         this.experience = 0;
         this.level = 0;
         rb = GetComponent<Rigidbody2D>();
-        sr = GetComponent<SpriteRenderer>();
+        sr = render.GetComponent<SpriteRenderer>();
+        animator = render.GetComponent<Animator>();
         nothooking = true;
         this.canTakeDamage = true;
         this.canWalk = true;
@@ -86,6 +98,8 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //sr.size = new Vector2(1f, 1f);
+
         //Inputs Ponganlos aqui cabrones y en string
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
@@ -98,44 +112,71 @@ public class Player : MonoBehaviour
 
         //PRUEBA EXP------
         //print("exp: " + experience + "   " + "lvl: " + level);
-        
+
         //--------
 
 
-        
+
 
         //Horizontal movement
         if (h > 0.6) lookR = true;
         else if (h < -0.6) lookR = false;
-        
-        if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking && canWalk)
+
+        if ((canMove || !isGrounded) && Mathf.Abs(h) > 0.6 && nothooking && canWalk)
         {
+            animator.SetBool("IsRunning", true);
+            /*
+            if (!audioSrc.isPlaying) {
+                audioSrc.clip = walk[Random.Range(0, 9)];
+                audioSrc.Play();
+            }
+            */
             transform.Translate(h * speed * Time.deltaTime, 0, 0, Space.World);
+            if (lookR == true)
+            {
+                sr.flipX = false;
+            }
+            else if (lookR == false)
+            {
+                sr.flipX = true;
+
+            }
+        }
+        else
+        {
+            animator.SetBool("IsRunning", false);
         }
 
         //Jumping movement
-        if (j==1 && lastj==0 && !this.isJumping && canMove)
+        if (j == 1 && lastj == 0 && !this.isJumping && canMove)
         {
             this.isJumping = true;
             rb.velocity = new Vector2(rb.velocity.x, 0);
-            if (isSide) {
-                if (sideLeft) {
+            if (isSide)
+            {
+                if (sideLeft)
+                {
                     StartCoroutine(sideMove(-1));
                 }
-                else {
+                else
+                {
                     StartCoroutine(sideMove(1));
                 }
             }
+            animator.SetBool("IsJumping", true);
             rb.AddForce(new Vector2(0, 16), ForceMode2D.Impulse);
-            
+
         }
+
+
         this.lastj = j;
         this.isGrounded = false;
 
+
         //Sword Attack
-        if (s==1 &&lasts==0&& canMove)
+        if (s == 1 && lasts == 0 && canMove)
         {
-            if (Mathf.Abs(h) > Mathf.Abs(v) || v==0)
+            if (Mathf.Abs(h) > Mathf.Abs(v) || v == 0)
             {
                 if (lookR) //Right
                 {
@@ -162,7 +203,7 @@ public class Player : MonoBehaviour
         lasts = s;
 
         //Shooting
-        if (b ==1 && canShoot)
+        if (b == 1 && canShoot)
         {
 
             if (lookR) // Right
@@ -178,17 +219,22 @@ public class Player : MonoBehaviour
         }
 
         //Dash movement
-        if (h!=0 && d>=0.5 && lastd<0.5 && !isDashing && canDash && canMove)
+        if (h != 0 && d >= 0.5 && lastd < 0.5 && !isDashing && canDash && canMove)
         {
             canDash = false;
             if (lookR) //Derecha
             {
+                sr.flipX = false;
+                animator.SetBool("IsDashing", true);
                 this.isDashing = true;
                 rb.AddForce(new Vector2(30, 0), ForceMode2D.Impulse);
                 dashCoroutine = StartCoroutine(dashCooldown());
+
             }
             else if (!lookR) // Izquierda
             {
+                sr.flipX = true;
+                animator.SetBool("IsDashing", true);
                 this.isDashing = true;
                 rb.AddForce(new Vector2(-30, 0), ForceMode2D.Impulse);
                 dashCoroutine = StartCoroutine(dashCooldown());
@@ -201,9 +247,11 @@ public class Player : MonoBehaviour
         }
 
         // Hook
-        if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook) {
+        if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook)
+        {
             hit = Physics2D.Raycast(transform.position, new Vector2(h, v), distance, lm);
-            if (hit.collider != null) {
+            if (hit.collider != null)
+            {
                 canHook = false;
                 nothooking = false;
                 hooking = true;
@@ -213,11 +261,13 @@ public class Player : MonoBehaviour
             else print(null);
         }
 
-        if (hooking) {
+        if (hooking)
+        {
             Vector3[] vect = { transform.position, hit.point };
             lr.SetPositions(vect);
             rb.velocity = (hit.point - (Vector2)transform.position).normalized * 10;
-            if (hook == 0 && lasthook == 1) {
+            if (hook == 0 && lasthook == 1)
+            {
                 lr.enabled = false;
                 nothooking = true;
                 rb.velocity = Vector2.up;
@@ -230,7 +280,7 @@ public class Player : MonoBehaviour
         {
             Time.timeScale = 0;
             GenericWindow.manager.Open(1);
-            
+
         }
 
         //Muerte por vida = 0
@@ -249,7 +299,7 @@ public class Player : MonoBehaviour
 
         //Guarda estado del juego
 
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -270,55 +320,70 @@ public class Player : MonoBehaviour
 
 
     }
-    private void OnCollisionEnter2D(Collision2D collision) {
-        
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+
         // collision with floors or fake floors
-        if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15) {
+        if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
+        {
             nothooking = true;
             hooking = false;
             lr.enabled = false;
+
             RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point, (Vector2)collision.transform.position - collision.GetContact(0).point);
-
+            //print("enter");
             float y = hit.point.y - hit.transform.position.y;
-            float limit = (float)collision.transform.lossyScale.y * 0.95f / 2;
-            if (y >= limit) { // top
+            float limit = (float)collision.transform.lossyScale.y * 0.90f / 2;
+            if (y >= limit)
+            { // top
+                //print("top");
+                animator.SetBool("IsJumping", false);
                 this.canHook = true;
             }
-            else if (y <= -limit) { // bottom
-
+            else if (y <= -limit)
+            { // bottom
+                //print("bot");
             }
-            else { // side
+            else
+            { // side
                 this.canHook = true;
-            }   
+                //print("side");
+            }
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
         // collision with enemy
-        if (collision.gameObject.layer == 10 && canTakeDamage) {
+        if (collision.gameObject.layer == 10 && canTakeDamage)
+        {
             StartCoroutine("takeDamage");
         }
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
         {
-            RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point,(Vector2)collision.transform.position- collision.GetContact(0).point);
+            RaycastHit2D hit = Physics2D.Raycast(collision.GetContact(0).point, (Vector2)collision.transform.position - collision.GetContact(0).point);
 
             float y = hit.point.y - hit.transform.position.y;
-            float limit =(float) collision.transform.lossyScale.y*0.95f / 2;
-            if (y >= limit) { // top
+            float limit = (float)collision.transform.lossyScale.y * 0.95f / 2;
+            if (y >= limit)
+            { // top
                 this.isJumping = false;
                 this.isGrounded = true;
                 this.canDash = true;
             }
-            else if( y <= -limit) { // bottom
+            else if (y <= -limit)
+            { // bottom
 
             }
-            else { // side
-                if (hit.point.x > hit.transform.position.x) {
+            else
+            { // side
+                if (hit.point.x > hit.transform.position.x)
+                {
                     sideLeft = false;
                 }
-                else {
+                else
+                {
                     sideLeft = true;
                 }
                 this.isSide = true;
@@ -326,30 +391,37 @@ public class Player : MonoBehaviour
                 this.isGrounded = true;
                 this.canDash = true;
             }
-        }    
+        }
     }
 
-    private void OnCollisionExit2D(Collision2D collision) {
+    private void OnCollisionExit2D(Collision2D collision)
+    {
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
             this.isSide = false;
     }
 
-    public int GetHealth() {
+    public int GetHealth()
+    {
         return this.health;
     }
-    public void SetHealth(int health) {
+    public void SetHealth(int health)
+    {
         this.health += health;
-        if (this.health > 100) {
+        if (this.health > 100)
+        {
             this.health = 100;
         }
     }
 
-    public int GetSpeed() {
+    public int GetSpeed()
+    {
         return this.speed;
     }
-    public void SetSpeed(int speed) {
+    public void SetSpeed(int speed)
+    {
         this.speed += speed;
-        if (this.speed > 10) {
+        if (this.speed > 10)
+        {
             this.speed = 10;
         }
     }
@@ -361,7 +433,7 @@ public class Player : MonoBehaviour
         {
             this.level += 1;
             this.experience = 0;
-            
+
         }
     }
 
@@ -371,32 +443,37 @@ public class Player : MonoBehaviour
     }
 
 
-    IEnumerator sideMove(int dir) {
+    IEnumerator sideMove(int dir)
+    {
         canMove = canWalk = false;
         float time = Time.time;
-        while (time+0.3f>Time.time) {
-            transform.Translate(0.15f*dir-(float)(Time.time-time)/4, 0, 0, Space.World);
+        while (time + 0.3f > Time.time)
+        {
+            transform.Translate(0.15f * dir - (float)(Time.time - time) / 4, 0, 0, Space.World);
             yield return new WaitForFixedUpdate();
         }
         canMove = canWalk = true;
     }
 
-    IEnumerator takeDamage() {
+    IEnumerator takeDamage()
+    {
         canTakeDamage = false;
-        sr.color = Color.red;
+        //sr.color = Color.red;
         this.health -= 10;
         if (health < 0) health = 0;
         yield return new WaitForSeconds(1);
-        sr.color = Color.blue;
+        //sr.color = Color.blue;
         canTakeDamage = true;
     }
 
     IEnumerator dashCooldown()
     {
         yield return new WaitForSeconds(0.15f);
-        rb.velocity = new Vector2(0,rb.velocity.y);
+        rb.velocity = new Vector2(0, rb.velocity.y);
         yield return new WaitForSeconds(0.4f);
         this.isDashing = false;
+        animator.SetBool("IsDashing", false);
+
     }
 
     IEnumerator swordCooldown()

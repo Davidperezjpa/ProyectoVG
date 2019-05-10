@@ -26,7 +26,7 @@ public class EnemyHealthBarBoss : MonoBehaviour
     void Update()
     {
         float healthNormalized = scriptEnemigo.GetCurrentHealth();
-        healthNormalized = healthNormalized / 100;
+        healthNormalized = healthNormalized / 5000;
         //print("HealthNormalized " + healthNormalized);
 
         /*

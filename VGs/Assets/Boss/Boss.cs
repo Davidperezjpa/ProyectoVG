@@ -20,7 +20,7 @@ public class Boss : MonoBehaviour
 
     //Propiedades del Boss
     private int currentHealth;
-    private int maxHealth = 500;
+    private int maxHealth = 5000;
 
 
 
@@ -38,8 +38,10 @@ public class Boss : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector2.MoveTowards(transform.position, new Vector2(player.transform.position.x, transform.position.y), Time.deltaTime * 3);
-        animator.SetFloat("Speed", Mathf.Abs(speed));
+        if (Mathf.Abs(transform.position.x - player.transform.position.x) > 1.5) {
+            transform.position = Vector2.MoveTowards(transform.position, new Vector2(player.transform.position.x, transform.position.y), Time.deltaTime * 3);
+            animator.SetFloat("Speed", Mathf.Abs(speed));
+        }
 
         if (transform.position.x - player.transform.position.x < 0)
         {
@@ -50,7 +52,7 @@ public class Boss : MonoBehaviour
         }
         if (switchTime == true)
         {
-            if (Mathf.Abs(transform.position.x - player.transform.position.x) < 2)
+            if (Mathf.Abs(transform.position.x - player.transform.position.x) < 2.5)
             {
                 animator.SetFloat("Speed", 0);
                 animator.SetBool("Melee", true);
@@ -126,5 +128,41 @@ public class Boss : MonoBehaviour
             animator.SetBool("Shoot", false);
         }
     }
+    
+    private void OnTriggerEnter2D(Collider2D collider) {
+        //When a proyectile hits the enemy
+        if (collider.gameObject.layer == 11) {
+            ModifyHealth(-25);
+            print("Pego proyectil current Hp: " + currentHealth);
+            if (currentHealth <= 0) {
+                player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
+                //Instantiate(drop, transform.position, transform.localRotation);
+                Destroy(collider.gameObject);
+                Destroy(transform.parent.gameObject);       //destruye el enemigo con todo y sus waypoints
 
+            }
+            else {
+                Destroy(collider.gameObject);
+            }
+
+        }
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision) {
+        //When Sword hits the enemy
+        if (collision.gameObject.layer == 16) {
+            print("Pego espada current Hp: " + currentHealth);
+            ModifyHealth(-50);
+            if (currentHealth <= 0) {
+                player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
+                //Instantiate(transform.position, transform.localRotation);
+                Destroy(this.gameObject);
+            }
+            else {
+
+            }
+
+        }
+    }
 }

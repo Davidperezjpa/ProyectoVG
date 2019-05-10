@@ -65,9 +65,7 @@ public class EnemigoDispara : MonoBehaviour
     public void ModifyHealth(int amount)
     {
         currentHealth += amount;
-
         float currentHealthPct = (float)currentHealth / (float)maxHealth;
-
     }
 
     public int GetCurrentHealth()

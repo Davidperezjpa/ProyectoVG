@@ -17,6 +17,13 @@ public class Boss : MonoBehaviour
     public Animator animator;
     public SpriteRenderer sr;
     public Rigidbody2D rb;
+
+    //Propiedades del Boss
+    private int currentHealth;
+    private int maxHealth = 500;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +31,8 @@ public class Boss : MonoBehaviour
         switchTime = true;
         StartCoroutine(dashCooldown());
         StartCoroutine(shootCooldown());
+
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -53,6 +62,18 @@ public class Boss : MonoBehaviour
                 animator.SetBool("Melee", false);
             }
         }
+    }
+
+    public void ModifyHealth(int amount)
+    {
+        currentHealth += amount;
+        float currentHealthPct = (float)currentHealth / (float)maxHealth;
+
+    }
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
     }
 
     IEnumerator meleeCooldown()

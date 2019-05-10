@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour
 {
@@ -17,10 +18,11 @@ public class Boss : MonoBehaviour
     public Animator animator;
     public SpriteRenderer sr;
     public Rigidbody2D rb;
+    public AudioSource explosion;
 
     //Propiedades del Boss
     private int currentHealth;
-    private int maxHealth = 5000;
+    private int maxHealth = 3000;
 
 
 
@@ -135,11 +137,12 @@ public class Boss : MonoBehaviour
             ModifyHealth(-25);
             print("Pego proyectil current Hp: " + currentHealth);
             if (currentHealth <= 0) {
-                player.GetComponent<Player>().GainExperience(5);        //Gana 5 puntos de experiencia
+                this.explosion.Play();
+                player.GetComponent<Player>().GainExperience(1000);        //Gana 5 puntos de experiencia
                 //Instantiate(drop, transform.position, transform.localRotation);
                 Destroy(collider.gameObject);
                 Destroy(transform.parent.gameObject);       //destruye el enemigo con todo y sus waypoints
-
+                SceneManager.LoadScene("UI", LoadSceneMode.Single);
             }
             else {
                 Destroy(collider.gameObject);
@@ -155,9 +158,11 @@ public class Boss : MonoBehaviour
             print("Pego espada current Hp: " + currentHealth);
             ModifyHealth(-50);
             if (currentHealth <= 0) {
-                player.GetComponent<Player>().GainExperience(10);        //Gana 10 puntos de experiencia
+                this.explosion.Play();
+                player.GetComponent<Player>().GainExperience(1000);        //Gana 10 puntos de experiencia
                 //Instantiate(transform.position, transform.localRotation);
                 Destroy(this.gameObject);
+                SceneManager.LoadScene("UI", LoadSceneMode.Single);
             }
             else {
 

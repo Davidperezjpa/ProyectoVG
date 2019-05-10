@@ -60,11 +60,6 @@ public class Player : MonoBehaviour
     private LineRenderer lr;
     private RaycastHit2D hit;
 
-    //Sounds
-    public AudioSource audioSrc;
-    public AudioClip[] walk;
-    public AudioClip attack, jump, dash;
-
     //Game Music
     public AudioSource backgroundMusic;
 
@@ -106,10 +101,6 @@ public class Player : MonoBehaviour
         this.isDashing = false;
         this.isGrounded = false;
         this.isJumping = false;
-        this.dashIsObtained = false;
-        this.hookIsObtained = false;
-        this.gunIsObtained = false;
-        this.climbIsObtained = false;
 
         lr = GetComponent<LineRenderer>();
         lr.endWidth = lr.startWidth = 0.3f;

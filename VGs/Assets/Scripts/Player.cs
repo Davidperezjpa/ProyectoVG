@@ -1,7 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class Player : MonoBehaviour
 {
@@ -12,14 +16,12 @@ public class Player : MonoBehaviour
     public GameObject render;
     private Animator animator;
 
-
     //Player stats
     [HideInInspector]
     public int health, speed, experience, level;
     private bool lookR;
     private bool canTakeDamage;
     private bool canWalk;
-
 
     //Jumping
     private bool isSide;
@@ -62,6 +64,24 @@ public class Player : MonoBehaviour
     public AudioSource audioSrc;
     public AudioClip[] walk;
     public AudioClip attack, jump, dash;
+
+    //Game Music
+    public AudioSource backgroundMusic;
+
+    //Checkpoints and habilities
+    public Transform[] respawns;
+    private Vector3 lastTouched;
+    private Vector3 initialPosition;
+    public bool dashIsObtained;
+    public bool hookIsObtained;
+    public bool gunIsObtained;
+    public bool climbIsObtained;
+    public AudioSource foundIt;
+    public AudioSource cantAffordIt;
+
+    //Boss
+    public Transform portal;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -84,6 +104,10 @@ public class Player : MonoBehaviour
         this.isDashing = false;
         this.isGrounded = false;
         this.isJumping = false;
+        this.dashIsObtained = false;
+        this.hookIsObtained = false;
+        this.gunIsObtained = false;
+        this.climbIsObtained = false;
 
         lr = GetComponent<LineRenderer>();
         lr.endWidth = lr.startWidth = 0.3f;
@@ -93,6 +117,9 @@ public class Player : MonoBehaviour
         lm = ~(1 << 12);
         hooking = false;
         canHook = true;
+
+        this.lastTouched = this.initialPosition = transform.position;
+
     }
 
     // Update is called once per frame
@@ -203,7 +230,7 @@ public class Player : MonoBehaviour
         lasts = s;
 
         //Shooting
-        if (b == 1 && canShoot)
+        if (b == 1 && canShoot && this.gunIsObtained)
         {
 
             if (lookR) // Right
@@ -219,7 +246,7 @@ public class Player : MonoBehaviour
         }
 
         //Dash movement
-        if (h != 0 && d >= 0.5 && lastd < 0.5 && !isDashing && canDash && canMove)
+        if (h != 0 && d >= 0.5 && lastd < 0.5 && !isDashing && canDash && canMove && this.dashIsObtained)
         {
             canDash = false;
             if (lookR) //Derecha
@@ -247,7 +274,7 @@ public class Player : MonoBehaviour
         }
 
         // Hook
-        if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook)
+        if (hook == 1 && lasthook == 0 && (h != 0 || v != 0) && canHook && this.hookIsObtained)
         {
             hit = Physics2D.Raycast(transform.position, new Vector2(h, v), distance, lm);
             if (hit.collider != null)
@@ -263,11 +290,13 @@ public class Player : MonoBehaviour
 
         if (hooking)
         {
+            animator.SetBool("IsHooking", true);
             Vector3[] vect = { transform.position, hit.point };
             lr.SetPositions(vect);
             rb.velocity = (hit.point - (Vector2)transform.position).normalized * 10;
             if (hook == 0 && lasthook == 1)
             {
+                animator.SetBool("IsHooking", false);
                 lr.enabled = false;
                 nothooking = true;
                 rb.velocity = Vector2.up;
@@ -276,8 +305,10 @@ public class Player : MonoBehaviour
         }
         lasthook = hook;
 
+        //Menu de pausa
         if (pause == 1)
         {
+            this.backgroundMusic.volume = 0.25f;
             Time.timeScale = 0;
             GenericWindow.manager.Open(1);
 
@@ -286,8 +317,111 @@ public class Player : MonoBehaviour
         //Muerte por vida = 0
         if (health == 0)
         {
-            GameOver();
+            this.GameOver();
         }
+
+        //Boss Teletransport
+        if (Vector2.Distance(transform.position, this.portal.position) < 1)
+        {
+            this.backgroundMusic.Stop();
+            SceneManager.LoadScene("BossFigth", LoadSceneMode.Single);
+        }
+
+        //Interacción con spawners
+        for (int i = 0; i < this.respawns.Length; i++)
+        {
+            if (Vector2.Distance(transform.position, this.respawns[i].position) < 1)
+            {
+                Vector3 touched = this.respawns[i].position;
+                if (touched == this.respawns[0].position)
+                {
+                    if (this.dashIsObtained == false)
+                    {
+                        if (this.level >= 1)
+                        {
+                            this.lastTouched = touched;
+                            this.level--;
+                            this.foundIt.Play();
+                            this.dashIsObtained = true;
+                        }
+                        else
+                        {
+                            this.cantAffordIt.Play();
+                        }
+                    }
+                }
+                else if (touched == this.respawns[1].position)
+                {
+                    if (this.hookIsObtained == false)
+                    {
+                        if (this.level >= 1)
+                        {
+                            this.lastTouched = touched;
+                            this.level--;
+                            this.foundIt.Play();
+                            this.hookIsObtained = true;
+                        }
+                        else
+                        {
+                            this.cantAffordIt.Play();
+                        }
+                    }
+                }
+                else if (touched == this.respawns[2].position)
+                {
+                    if (this.gunIsObtained == false)
+                    {
+                        if (this.level >= 1)
+                        {
+                            this.lastTouched = touched;
+                            this.level--;
+                            this.foundIt.Play();
+                            this.gunIsObtained = true;
+                        }
+                        else
+                        {
+                            this.cantAffordIt.Play();
+                        }
+                    }
+                }
+                else
+                {
+                    if (this.climbIsObtained == false)
+                    {
+                        if (this.level >= 1)
+                        {
+                            this.lastTouched = touched;
+                            this.level--;
+                            this.foundIt.Play();
+                            this.climbIsObtained = true;
+                        }
+                        else
+                        {
+                            this.cantAffordIt.Play();
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    public bool[] getHabilities()
+    {
+        bool[] tmp = new bool[4];
+        tmp[0] = this.dashIsObtained;
+        tmp[1] = this.hookIsObtained;
+        tmp[2] = this.gunIsObtained;
+        tmp[3] = this.climbIsObtained;
+        return tmp;
+    }
+
+    public void setHabilities(bool[] habilidades)
+    {
+        this.dashIsObtained = habilidades[0];
+        this.hookIsObtained = habilidades[1];
+        this.gunIsObtained = habilidades[2];
+        this.climbIsObtained = habilidades[3];
     }
 
     private void GameOver()
@@ -296,10 +430,13 @@ public class Player : MonoBehaviour
         GenericWindow.manager.Open(2);
         //Congelar el tiempo por pausa
         Time.timeScale = 0;
+    }
 
-        //Guarda estado del juego
-
-
+    public void respawn()
+    {
+        this.backgroundMusic.Play();
+        this.health = 100;
+        this.transform.position = this.lastTouched;
     }
 
     private void OnTriggerEnter2D(Collider2D collider)
@@ -326,6 +463,7 @@ public class Player : MonoBehaviour
         // collision with floors or fake floors
         if (collision.gameObject.layer == 8 || collision.gameObject.layer == 15)
         {
+            animator.SetBool("IsHooking", false);
             nothooking = true;
             hooking = false;
             lr.enabled = false;

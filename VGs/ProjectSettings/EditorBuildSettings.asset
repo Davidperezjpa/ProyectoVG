@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Nivel1.unity
     guid: 9d002a106b71d2a47ac53cce7846e03b
+  - enabled: 1
+    path: Assets/Scenes/BossFigth.unity
+    guid: 2ec7e511a9b60334495b51926aa5dc8d
   m_configObjects: {}

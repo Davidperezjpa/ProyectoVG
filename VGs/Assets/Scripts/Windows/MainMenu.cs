@@ -6,12 +6,13 @@ using UnityEngine.UI;
 
 public class MainMenu : GenericWindow
 {
-    public Button continueButton;
+    //public Button continueButton;
 
 
     //Abre esta ventana verificando si el boton de continue es necesario
     public override void Open()
     {
+        /*
         bool canContinue = false;
         continueButton.gameObject.SetActive(canContinue);
 
@@ -19,26 +20,22 @@ public class MainMenu : GenericWindow
         {
             firstSelected = continueButton.gameObject;
         }
+        */
 
         base.Open();
     }
-
+    /*
     //Continuar el juego
     public void Continue()
     {
         SceneManager.LoadScene("Test", LoadSceneMode.Single);
     }
+    */
 
     //Abrir un nuevo juego
     public void NewGame()
     {
         SceneManager.LoadScene("Nivel1", LoadSceneMode.Single);
-    }
-
-    //Abrir el menu de opciones
-    public void Options()
-    {
-        manager.Open(1);
     }
 
     public void Quit()

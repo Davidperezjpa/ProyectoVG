@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer sr;
 
     //Player stats
+    [HideInInspector]
     public int health,speed,experience,level;
     private bool lookR;
     private bool canTakeDamage;
@@ -27,6 +28,7 @@ public class Player : MonoBehaviour
     private Coroutine dashCoroutine;
 
     //Enemy drop score
+    [HideInInspector]
     public int enemyDrop;
     
     //Sword
@@ -51,6 +53,10 @@ public class Player : MonoBehaviour
     private LineRenderer lr;
     private RaycastHit2D hit;
 
+    //Sounds
+    public AudioSource audioSrc;
+    public AudioClip[] walk;
+    public AudioClip attack, jump, dash;
     // Start is called before the first frame update
     void Start()
     {
@@ -110,6 +116,10 @@ public class Player : MonoBehaviour
         
         if((canMove|| !isGrounded)&& Mathf.Abs(h)>0.6 &&nothooking && canWalk)
         {
+            if (!audioSrc.isPlaying) {
+                audioSrc.clip = walk[Random.Range(0, 9)];
+                audioSrc.Play();
+            }
             transform.Translate(h * speed * Time.deltaTime, 0, 0, Space.World);
         }
 
